@@ -24,11 +24,14 @@ namespace PuzzleBoardFramework {
         public virtual void OnRecordReceived (Record<T> record) {
             if (record.type == RecordType.Merge) {
                 if (record.newPosition == record.oldPosition) {
-                    // This is the tile that remains in place.  We'll update it's render cube's value.
-                    UpdateRenderValue (record.newPosition.x, record.newPosition.y, record.newValue);
+                    // This is the tile that remains in place.
+                    // Since we're now moving the tile that's merging into this one, this tile's render object
+                    // should get destroyed when that record is received.  We'll just do nothing here.
                 } else {
-                    // This is the tile that moved during the merge.  We're going to destroy it's render cube.
-                    DestroyRenderObject (record.oldPosition.x, record.oldPosition.y);
+                    // This is the tile that moved during the merge.  We'll move and update it, destorying the other
+                    // render object in the process.
+                    MoveRenderObject (record.oldPosition.x, record.oldPosition.y, record.newPosition.x, record.newPosition.y);
+                    UpdateRenderValue (record.newPosition.x, record.newPosition.y, record.newValue);
                 }
             } else if (record.type == RecordType.Move) {
                 // This is a tile that moved into an empty spot.  Find and update it's render cube.
@@ -47,9 +50,12 @@ namespace PuzzleBoardFramework {
 
         public void MoveRenderObject (int oldX, int oldY, int newX, int newY) {
             GameObject obj = renderObjects[oldX, oldY];
-            UpdateRenderPosition (obj, newX, newY);
-            renderObjects[newX, newY] = obj;
-            renderObjects[oldX, oldY] = null;
+            if (obj != null) {
+                DestroyRenderObject (newX, newY);
+                UpdateRenderPosition (obj, newX, newY);
+                renderObjects[newX, newY] = obj;
+                renderObjects[oldX,oldY] = null;
+            }
         }
 
         public virtual void UpdateRenderPosition (GameObject obj, int x, int y, int z = 0) {
@@ -65,8 +71,9 @@ namespace PuzzleBoardFramework {
         }
 
         public void DestroyRenderObject (int x, int y) {
-            if (renderObjects[x,y] != null)
+            if (renderObjects[x,y] != null) {
                 Destroy (renderObjects[x,y]);
+            }
             renderObjects[x,y] = null;
         }
 
