@@ -42,13 +42,13 @@ namespace PuzzleBoardFramework {
         /// <summary>Try to move each cell by it's currently set move vector, then reset all move vectors.</summary>
         public void ApplyMovementAndReset () {
             ApplyMoveVectors ();
-            ResetMoveVectors ();
+            ClearMoveVectors ();
         }
 
         /// <summary>Try to move each cell with the given MoveVector set, then reset all move vectors.</summary>
         public void ApplyMovementAndReset (MoveVector push) {
             ApplyMoveVectors (push);
-            ResetMoveVectors ();
+            ClearMoveVectors ();
         }
 
         /// <summary>Set movement vectors on cells to the given direction.</summary>
@@ -308,7 +308,7 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Resets all MoveVectors.  Sets all values to default, using the current mergeStrategy.</summary>
         void Clear () {
-            ResetMoveVectors ();
+            ClearMoveVectors ();
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     values[x,y] = mergeStrategy.Empty ();
@@ -429,7 +429,7 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Resest all of the MoveVector values to MoveVector.zero</summary>
-        void ResetMoveVectors () {
+        void ClearMoveVectors () {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     moveVectors[x,y] = MoveVector.zero;
