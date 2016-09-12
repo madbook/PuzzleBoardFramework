@@ -67,6 +67,14 @@ namespace PuzzleBoardFramework {
                 Destroy (renderObjects[x,y]);
             renderObjects[x,y] = null;
         }
+
+        public void ClearRenderObjects () {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    DestroyRenderObject (x, y);
+                }
+            }
+        }
     }
 
 }
