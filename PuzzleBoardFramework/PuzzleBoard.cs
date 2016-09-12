@@ -169,6 +169,23 @@ namespace PuzzleBoardFramework {
             return matches;
         }
 
+        /// <summary>Returns a List of Index2D positions matching any of the given values.</summary>
+        public List<Index2D> GetPositionsMatching (params T[] valuesToMatch) {
+            List<Index2D> matches = new List<Index2D> ();
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    foreach (T value in valuesToMatch) {
+                        if (values[x,y].Equals (value)) {
+                            matches.Add (new Index2D (x, y));
+                            goto Next;
+                        }
+                    }
+                    Next:;
+                }
+            }
+            return matches;
+        }
+
         /// <summary>Returns a List of Index2D positions in the given row.</summary>
         public List<Index2D> GetPositionsInRow (int row) {
             List<Index2D> matches = new List<Index2D> ();
