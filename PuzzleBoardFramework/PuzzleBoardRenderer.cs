@@ -50,8 +50,8 @@ namespace PuzzleBoardFramework {
             renderObjects[oldX, oldY] = null;
         }
 
-        public void UpdateRenderPosition (GameObject obj, int x, int y) {
-            obj.transform.localPosition = new Vector3 (x - width/2 + .5f, y - height/2 + .5f, 0);
+        public virtual void UpdateRenderPosition (GameObject obj, int x, int y, int z = 0) {
+            obj.transform.localPosition = new Vector3 (x - width/2 + .5f, y - height/2 + .5f, z);
         }
 
         public void InsertNewRenderObject (int x, int y, T value) {
