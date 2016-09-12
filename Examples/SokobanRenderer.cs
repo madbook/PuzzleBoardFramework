@@ -13,6 +13,11 @@ public class SokobanRenderer : PuzzleBoardRenderer<int> {
     public new void Start () {
         base.Start ();
         history = new HistoryManager<int> ();
+        Init ();
+        recordingHistory = true;
+    }
+
+    void Init () {
         board.UpdateTiles (board.GetPositionsInColumn (0), WALL_TYPE);
         board.UpdateTiles (board.GetPositionsInColumn (width - 1), WALL_TYPE);
         board.UpdateTiles (board.GetPositionsInRow (0), WALL_TYPE);
@@ -20,6 +25,14 @@ public class SokobanRenderer : PuzzleBoardRenderer<int> {
         board.UpdateTile (1, 1, PLAYER_TYPE);
         board.UpdateTile (2, 2, CRATE_TYPE);
         board.UpdateTile (2, 3, CRATE_TYPE);
+    }
+
+    public void Reset () {
+        recordingHistory = false;
+        board.Clear ();
+        ClearRenderObjects ();
+        history.ClearAll ();
+        Init ();
         recordingHistory = true;
     }
 
@@ -74,6 +87,9 @@ public class SokobanRenderer : PuzzleBoardRenderer<int> {
     void Update () {
         if (Input.GetKeyDown (KeyCode.U)) {
             UndoLastTurn ();
+            return;
+        } else if (Input.GetKeyDown (KeyCode.R)) {
+            Reset ();
             return;
         }
 
