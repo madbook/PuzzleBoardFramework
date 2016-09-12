@@ -302,18 +302,18 @@ namespace PuzzleBoardFramework {
             ));
         }
 
-        bool IsPositionValue (Index2D position, T value) {
-            return GetTile (position).Equals (value);
-        }
-
         /// <summary>Resets all MoveVectors.  Sets all values to default, using the current mergeStrategy.</summary>
-        void Clear () {
+        public void Clear () {
             ClearMoveVectors ();
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     values[x,y] = mergeStrategy.Empty ();
                 }
             }
+        }
+
+        bool IsPositionValue (Index2D position, T value) {
+            return GetTile (position).Equals (value);
         }
 
         /// <summary>Sets the value at the given Index2D position.</summary>
