@@ -36,6 +36,8 @@ namespace PuzzleBoardFramework {
                 UpdateRenderValue (record.newPosition.x, record.newPosition.y, record.newValue);
             } else if (record.type == RecordType.Insert) {
                 InsertNewRenderObject (record.newPosition.x, record.newPosition.y, record.newValue);
+            } else if (record.type == RecordType.Update) {
+                UpdateRenderValue (record.newPosition.x, record.newPosition.y, record.newValue);
             }
         }
 
