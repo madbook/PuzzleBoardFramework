@@ -10,7 +10,7 @@ namespace PuzzleBoardFramework {
         MergeStrategy<T> mergeStrategy;
         T[,] values;
         MoveVector[,] moveVectors;
-        List<Action<Record<T>>> consumers;
+        Publisher<Record<T>> publisher = new Publisher<Record<T>> ();
 
         /// <summary>Create a new PuzzleBoard using a default MergeStrategy.</summary>
         public PuzzleBoard (int width, int height) {
@@ -29,14 +29,14 @@ namespace PuzzleBoardFramework {
         }
 
         void Init () {
-            consumers = new List<Action<Record<T>>> ();
             values = new T[width,height];
             moveVectors = new MoveVector[width,height];
         }
 
         /// <summary>Register a callback method to be called when a Record is added via AddRecord.</summary>
         public void RegisterConsumer (Action<Record<T>> callback) {
-            consumers.Add (callback);
+            // TODO move this out into the controller
+            publisher.Subscribe (callback);
         }
 
         /// <summary>Try to move each cell by it's currently set move vector, then reset all move vectors.</summary>
@@ -343,9 +343,7 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Broadcasts a Record to any consumers added with RegisterConsumer</summary>
         void AddRecord (Record<T> record) {
-            foreach (Action<Record<T>> callback in consumers) {
-                callback (record);
-            }
+            publisher.Publish (record);
         }
 
         /// <summary>Attempts to apply the given MoveVector to all tiles with it set.</summary>
