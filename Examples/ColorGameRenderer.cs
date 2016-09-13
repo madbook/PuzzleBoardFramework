@@ -31,19 +31,19 @@ public class ColorGameRenderer : PuzzleBoardRenderer<Color> {
         if (Input.GetKeyDown (KeyCode.LeftArrow)) {
             board.PushAll (MoveVector.left);
             board.ApplyMovementAndReset (MoveVector.left);
-            InsertAtAnAvailablePosition (board.GetPositionsInColumnMatching (default (Color), width - 1));
+            InsertAtAnAvailablePosition (board.GetPositionsInColumnMatching (width - 1, default (Color)));
         } else if (Input.GetKeyDown (KeyCode.RightArrow)) {
             board.PushAll (MoveVector.right);
             board.ApplyMovementAndReset (MoveVector.right);
-            InsertAtAnAvailablePosition (board.GetPositionsInColumnMatching (default (Color), 0));
+            InsertAtAnAvailablePosition (board.GetPositionsInColumnMatching (0, default (Color)));
         } else if (Input.GetKeyDown (KeyCode.DownArrow)) {
             board.PushAll (MoveVector.down);
             board.ApplyMovementAndReset (MoveVector.down);
-            InsertAtAnAvailablePosition (board.GetPositionsInRowMatching (default (Color), height - 1));
+            InsertAtAnAvailablePosition (board.GetPositionsInRowMatching (height - 1, default (Color)));
         } else if (Input.GetKeyDown (KeyCode.UpArrow)) {
             board.PushAll (MoveVector.up);
             board.ApplyMovementAndReset (MoveVector.up);
-            InsertAtAnAvailablePosition (board.GetPositionsInRowMatching (default (Color), 0));
+            InsertAtAnAvailablePosition (board.GetPositionsInRowMatching (0, default (Color)));
         }
     }
 

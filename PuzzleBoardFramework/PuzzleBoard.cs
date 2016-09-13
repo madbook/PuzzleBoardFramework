@@ -67,14 +67,14 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Set movement vectors at all cells matching the value to the given direction.</summary>
-        public void PushAllMatching (MoveVector push, T value)  {
+        public void PushAllMatching (MoveVector push, T matchValue)  {
             if (push == MoveVector.zero) {
                 return;
             }
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    if (values[x,y].Equals(value)) {
+                    if (values[x,y].Equals(matchValue)) {
                         moveVectors[x,y] = push;
                     }
                 }
@@ -82,21 +82,21 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Set the movement vector of the cell at the given x and y coordinates to the given direction.</summary>
-        public void PushAtPosition (int x, int y, MoveVector push) {
-            PushAtPosition (new Index2D (x, y), push);
+        public void PushTile (int x, int y, MoveVector push) {
+            PushTile (new Index2D (x, y), push);
         }
 
         /// <summary>Set the movement vector of the cell at the given Index2D position to the given direction.</summary>
-        public void PushAtPosition (Index2D position, MoveVector push) {
+        public void PushTile (Index2D position, MoveVector push) {
             if (IsValidIndex2D (position)) {
                 moveVectors[position.x, position.y] = push;
             }
         }
 
         /// <summary>Set the movement vector of each cell in a list of Index2D positions to the given direction.</summary>
-        public void PushAtPositions (List<Index2D> positions, MoveVector push) {
+        public void PushTile (List<Index2D> positions, MoveVector push) {
             foreach (Index2D position in positions) {
-                PushAtPosition (position, push);
+                PushTile (position, push);
             }
         }
 
@@ -138,7 +138,7 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Insert, update, or delete each value in a list of Index2D positions.</summary> 
-        public void UpdateTiles (List<Index2D> positions, T value) {
+        public void UpdateTile (List<Index2D> positions, T value) {
             foreach (Index2D position in positions) {
                 UpdateTile (position, value);
             }
@@ -155,12 +155,12 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Returns a List of Index2D positions matching the given value.</summary>
-        public List<Index2D> GetPositionsMatching (T value) {
+        public List<Index2D> GetPositionsMatching (T matchValue) {
             List<Index2D> matches = new List<Index2D> ();
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    if (values[x,y].Equals (value)) {
+                    if (values[x,y].Equals (matchValue)) {
                         matches.Add (new Index2D (x, y));
                     }
                 }
@@ -174,8 +174,8 @@ namespace PuzzleBoardFramework {
             List<Index2D> matches = new List<Index2D> ();
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    foreach (T value in valuesToMatch) {
-                        if (values[x,y].Equals (value)) {
+                    foreach (T matchValue in valuesToMatch) {
+                        if (values[x,y].Equals (matchValue)) {
                             matches.Add (new Index2D (x, y));
                             goto Next;
                         }
@@ -209,11 +209,11 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Returns a List of Index2D positions matching the given value in the given row.</summary>
-        public List<Index2D> GetPositionsInRowMatching (T value, int row) {
+        public List<Index2D> GetPositionsInRowMatching (int row, T matchValue) {
             List<Index2D> matches = new List<Index2D> ();
 
             for (int x = 0; x < width; x++) {
-                if (values[x,row].Equals (value)) {
+                if (values[x,row].Equals (matchValue)) {
                     matches.Add (new Index2D (x, row));
                 }
             }
@@ -222,11 +222,11 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Returns a List of Index2D positions matching the given value in the given column.</summary>
-        public List<Index2D> GetPositionsInColumnMatching (T value, int col) {
+        public List<Index2D> GetPositionsInColumnMatching (int col, T matchValue) {
             List<Index2D> matches = new List<Index2D> ();
 
             for (int y = 0; y < height; y++) {
-                if (values[col, y].Equals (value)) {
+                if (values[col, y].Equals (matchValue)) {
                     matches.Add (new Index2D (col, y));
                 }
             }
