@@ -59,5 +59,4 @@ namespace PuzzleBoardFramework {
             currentTurn = new Stack<T> ();
         }
     }
-
 }
