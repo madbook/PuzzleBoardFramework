@@ -7,12 +7,12 @@ public class SokobanRenderer : PuzzleBoardRenderer<int> {
     const int CRATE_TYPE = 2;
     const int WALL_TYPE = 3;
 
-    HistoryManager<int> history;
+    IHistory<Record<int>> history;
     bool recordingHistory;
 
     public new void Start () {
         base.Start ();
-        history = new HistoryManager<int> ();
+        history = new History<Record<int>> ();
         Init ();
         recordingHistory = true;
     }
