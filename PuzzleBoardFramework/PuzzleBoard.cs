@@ -60,25 +60,25 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Set the movement vector of the cell at the given x and y coordinates to the given direction.</summary>
         public void PushTile (int x, int y, MoveVector push) {
-            PushTile (new Index2D (x, y), push);
+            PushTile (new BoardPosition (x, y), push);
         }
 
         /// <summary>Set the movement vector of the cell at the given Index2D position to the given direction.</summary>
-        public void PushTile (Index2D position, MoveVector push) {
+        public void PushTile (IBoardIndex position, MoveVector push) {
             if (IsValidIndex2D (position)) {
                 moveVectors.UpdateTile (position, push);
             }
         }
 
         /// <summary>Set the movement vector of each cell in a list of Index2D positions to the given direction.</summary>
-        public void PushTile (List<Index2D> positions, MoveVector push) {
-            foreach (Index2D position in positions) {
+        public void PushTile (List<IBoardIndex> positions, MoveVector push) {
+            foreach (IBoardIndex position in positions) {
                 PushTile (position, push);
             }
         }
 
         /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
-        public override void UpdateTile (Index2D position, T value) {
+        public override void UpdateTile (IBoardIndex position, T value) {
             T oldValue = GetTile (position);
 
             bool newIsEmpty = mergeStrategy.IsEmpty (value);
@@ -100,8 +100,8 @@ namespace PuzzleBoardFramework {
             
             AddRecord (new Record<T> (
                 type,
-                position,
-                position,
+                new BoardPosition (position.X, position.Y),
+                new BoardPosition (position.X, position.Y),
                 oldValue,
                 value
             ));
@@ -120,8 +120,8 @@ namespace PuzzleBoardFramework {
             SetTile (record.oldPosition, record.oldValue);
             AddRecord (new Record<T> (
                 Record.GetOppositeRecordType (record.type),
-                record.newPosition,
-                record.oldPosition,
+                new BoardPosition (record.newPosition.X, record.newPosition.Y),
+                new BoardPosition (record.oldPosition.X, record.oldPosition.Y),
                 record.newValue,
                 record.oldValue
             ));
@@ -165,14 +165,14 @@ namespace PuzzleBoardFramework {
                 for (int x = width - 1; x >= 1; x--) {
                     MoveVector push = moveVectors.GetTile (x, y);
                     if (push == MoveVector.left) {
-                        TryPush (new Index2D (x, y), new Index2D (x+push.x, y+push.y), push);
+                        TryPush (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y), push);
                     }
                 }
 
                 for (int x = 1; x < width; x++) {
                     MoveVector push = moveVectors.GetTile (x, y);
                     if (push == MoveVector.left) {
-                        TryMerge (new Index2D (x, y), new Index2D (x+push.x, y+push.y));
+                        TryMerge (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y));
                     }
                 }
             }
@@ -184,14 +184,14 @@ namespace PuzzleBoardFramework {
                 for (int x = 0; x < width - 1; x++) {
                     MoveVector push = moveVectors.GetTile (x, y);
                     if (push == MoveVector.right) {
-                        TryPush (new Index2D (x, y), new Index2D (x+push.x, y+push.y), push);
+                        TryPush (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y), push);
                     }
                 }
 
                 for (int x = width - 2; x >= 0; x--) {
                     MoveVector push = moveVectors.GetTile (x, y);
                     if (push == MoveVector.right) {
-                        TryMerge (new Index2D (x, y), new Index2D (x+push.x, y+push.y));
+                        TryMerge (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y));
                     }
                 }
             }
@@ -203,14 +203,14 @@ namespace PuzzleBoardFramework {
                 for (int y = height - 1; y >= 1; y--) {
                     MoveVector push = moveVectors.GetTile (x, y);
                     if (push == MoveVector.down) {
-                        TryPush (new Index2D (x, y), new Index2D (x+push.x, y+push.y), push);
+                        TryPush (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y), push);
                     }
                 }
 
                 for (int y = 1; y < height; y++) {
                     MoveVector push = moveVectors.GetTile (x, y);
                     if (push == MoveVector.down) {
-                        TryMerge (new Index2D (x, y), new Index2D (x+push.x, y+push.y));
+                        TryMerge (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y));
                     }
                 }
             }
@@ -222,14 +222,14 @@ namespace PuzzleBoardFramework {
                 for (int y = 0; y < height - 1; y++) {
                     MoveVector push = moveVectors.GetTile (x, y);
                     if (push == MoveVector.up) {
-                        TryPush (new Index2D (x, y), new Index2D (x+push.x, y+push.y), push);
+                        TryPush (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y), push);
                     }
                 }
 
                 for (int y = height - 2; y >= 0; y--) {
                     MoveVector push = moveVectors.GetTile (x, y);
                     if (push == MoveVector.up) {
-                        TryMerge (new Index2D (x, y), new Index2D (x+push.x, y+push.y));
+                        TryMerge (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y));
                     }
                 }
             }
@@ -241,7 +241,7 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Attempts to propagate MoveVectors to stationary cells in their direction, using the set MergeStrategy.</summary>
-        void TryPush (Index2D pushFrom, Index2D pushInto, MoveVector push) {
+        void TryPush (BoardPosition pushFrom, BoardPosition pushInto, MoveVector push) {
             if (!(IsValidIndex2D (pushFrom) && IsValidIndex2D (pushInto))) {
                 return;
             }
@@ -259,7 +259,7 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Attempts to merge two cell positions, using the set MergeStrategy.</summary>
-        void TryMerge (Index2D mergeFrom, Index2D mergeInto) {
+        void TryMerge (BoardPosition mergeFrom, BoardPosition mergeInto) {
             if (!(IsValidIndex2D (mergeFrom) && IsValidIndex2D (mergeInto))) {
                 return;
             }
@@ -276,8 +276,8 @@ namespace PuzzleBoardFramework {
 
                     AddRecord (new Record<T> (
                         RecordType.Move,
-                        mergeFrom,
-                        mergeInto,
+                        new BoardPosition (mergeFrom.X, mergeFrom.Y),
+                        new BoardPosition (mergeInto.X, mergeInto.Y),
                         valueFrom,
                         valueFrom
                     ));
@@ -290,16 +290,16 @@ namespace PuzzleBoardFramework {
 
                     AddRecord (new Record<T> (
                         RecordType.Merge,
-                        mergeFrom,
-                        mergeInto,
+                        new BoardPosition (mergeFrom.X, mergeFrom.Y),
+                        new BoardPosition (mergeInto.X, mergeInto.Y),
                         valueFrom,
                         newTile
                     ));
 
                     AddRecord (new Record<T> (
                         RecordType.Merge,
-                        mergeInto,
-                        mergeInto,
+                        new BoardPosition (mergeInto.X, mergeInto.Y),
+                        new BoardPosition (mergeInto.X, mergeInto.Y),
                         valueInto,
                         newTile
                     ));

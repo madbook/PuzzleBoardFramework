@@ -52,11 +52,11 @@ public class ThreesRenderer : PuzzleBoardRenderer<int> {
         }
     }
 
-    void InsertAtAnAvailablePosition (List<Index2D> positions) {
+    void InsertAtAnAvailablePosition (List<IBoardIndex> positions) {
         if (positions.Count == 0) {
             return;
         }
-        Index2D position = positions[0];
-        board.UpdateTile (position.x, position.y, Random.Range (1, 4));
+        IBoardIndex position = positions[0];
+        board.UpdateTile (position.X, position.Y, Random.Range (1, 4));
     }
 }

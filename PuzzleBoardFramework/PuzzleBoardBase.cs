@@ -17,17 +17,17 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Insert, update, or delete the value at the given x and y coordinates.</summary>
         public void UpdateTile (int x, int y, T value) {
-            UpdateTile (new Index2D (x, y), value);
+            UpdateTile (new BoardPosition (x, y), value);
         }
 
         /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
-        public virtual void UpdateTile (Index2D position, T value) {
+        public virtual void UpdateTile (IBoardIndex position, T value) {
             SetTile (position, value);
         }
 
         /// <summary>Insert, update, or delete each value in a list of Index2D positions.</summary> 
-        public void UpdateTile (List<Index2D> positions, T value) {
-            foreach (Index2D position in positions) {
+        public void UpdateTile (List<IBoardIndex> positions, T value) {
+            foreach (IBoardIndex position in positions) {
                 UpdateTile (position, value);
             }
         }
@@ -38,18 +38,18 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Returns the value at the given Index2D position.</summary>
-        public T GetTile (Index2D position) {
-            return values[position.x, position.y];
+        public T GetTile (IBoardIndex position) {
+            return values[position.X, position.Y];
         }
 
         /// <summary>Returns a List of Index2D positions matching the given value.</summary>
-        public List<Index2D> GetPositionsMatching (T matchValue) {
-            List<Index2D> matches = new List<Index2D> ();
+        public List<IBoardIndex> GetPositionsMatching (T matchValue) {
+            List<IBoardIndex> matches = new List<IBoardIndex> ();
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (values[x,y].Equals (matchValue)) {
-                        matches.Add (new Index2D (x, y));
+                        matches.Add (new BoardPosition (x, y));
                     }
                 }
             }
@@ -58,13 +58,13 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Returns a List of Index2D positions matching any of the given values.</summary>
-        public List<Index2D> GetPositionsMatching (params T[] valuesToMatch) {
-            List<Index2D> matches = new List<Index2D> ();
+        public List<IBoardIndex> GetPositionsMatching (params T[] valuesToMatch) {
+            List<IBoardIndex> matches = new List<IBoardIndex> ();
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     foreach (T matchValue in valuesToMatch) {
                         if (values[x,y].Equals (matchValue)) {
-                            matches.Add (new Index2D (x, y));
+                            matches.Add (new BoardPosition (x, y));
                             goto Next;
                         }
                     }
@@ -75,34 +75,34 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Returns a List of Index2D positions in the given row.</summary>
-        public List<Index2D> GetPositionsInRow (int row) {
-            List<Index2D> matches = new List<Index2D> ();
+        public List<IBoardIndex> GetPositionsInRow (int row) {
+            List<IBoardIndex> matches = new List<IBoardIndex> ();
 
             for (int x = 0; x < width; x++) {
-                matches.Add (new Index2D (x, row));
+                matches.Add (new BoardPosition (x, row));
             }
 
             return matches;
         }
 
         /// <summary>Returns a List of Index2D positions in the given column.</summary>
-        public List<Index2D> GetPositionsInColumn (int col) {
-            List<Index2D> matches = new List<Index2D> ();
+        public List<IBoardIndex> GetPositionsInColumn (int col) {
+            List<IBoardIndex> matches = new List<IBoardIndex> ();
 
             for (int y = 0; y < height; y++) {
-                matches.Add (new Index2D (col, y));
+                matches.Add (new BoardPosition (col, y));
             }
 
             return matches;
         }
 
         /// <summary>Returns a List of Index2D positions matching the given value in the given row.</summary>
-        public List<Index2D> GetPositionsInRowMatching (int row, T matchValue) {
-            List<Index2D> matches = new List<Index2D> ();
+        public List<IBoardIndex> GetPositionsInRowMatching (int row, T matchValue) {
+            List<IBoardIndex> matches = new List<IBoardIndex> ();
 
             for (int x = 0; x < width; x++) {
                 if (values[x,row].Equals (matchValue)) {
-                    matches.Add (new Index2D (x, row));
+                    matches.Add (new BoardPosition (x, row));
                 }
             }
 
@@ -110,12 +110,12 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Returns a List of Index2D positions matching the given value in the given column.</summary>
-        public List<Index2D> GetPositionsInColumnMatching (int col, T matchValue) {
-            List<Index2D> matches = new List<Index2D> ();
+        public List<IBoardIndex> GetPositionsInColumnMatching (int col, T matchValue) {
+            List<IBoardIndex> matches = new List<IBoardIndex> ();
 
             for (int y = 0; y < height; y++) {
                 if (values[col, y].Equals (matchValue)) {
-                    matches.Add (new Index2D (col, y));
+                    matches.Add (new BoardPosition (col, y));
                 }
             }
 
@@ -123,59 +123,60 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Get a list of all orthaganally connected positions that match the value at the given x and y coordinates.</summary>
-        public List<Index2D> GetIdenticalAdjacentPositions (T value, int x, int y) {
-            return GetIdenticalAdjacentPositions (value, new Index2D (x, y));
+        public List<IBoardIndex> GetIdenticalAdjacentPositions (T value, int x, int y) {
+            return GetIdenticalAdjacentPositions (value, new BoardPosition (x, y));
         }
 
         /// <summary>Get a list of all orthaganally connected positions that match the value at the given Index2D position.</summary>
-        public List<Index2D> GetIdenticalAdjacentPositions (T value, Index2D position) {
-            List<Index2D> positions = new List<Index2D> ();
+        public List<IBoardIndex> GetIdenticalAdjacentPositions (T value, IBoardIndex position) {
+            List<IBoardIndex> positions = new List<IBoardIndex> ();
             int[,] checkedPositions = new int[width, height];
-            Queue<Index2D> positionsToCheck = new Queue<Index2D> ();
-
-            checkedPositions[position.x, position.y] = 1;
+            Queue<BoardPosition> positionsToCheck = new Queue<BoardPosition> ();
+            // is there an easier way to do this??
+            BoardPosition _position = new BoardPosition (position.X, position.Y);
+            checkedPositions[position.X, position.Y] = 1;
             positions.Add (position);
-            positionsToCheck.Enqueue (position);
+            positionsToCheck.Enqueue (_position);
 
             // Each item in the queue should already be in the positions List.
             while (positionsToCheck.Count > 0) {
-                Index2D checkingPosition = positionsToCheck.Dequeue ();
+                BoardPosition checkingPosition = positionsToCheck.Dequeue ();
 
-                Index2D checkingUp = checkingPosition + MoveVector.up;
+                BoardPosition checkingUp = checkingPosition + MoveVector.up;
                 if (IsValidIndex2D (checkingUp) &&
-                        checkedPositions[checkingUp.x, checkingUp.y] == 0) {
-                    checkedPositions[checkingUp.x, checkingUp.y] = 1;
-                    if (values[checkingUp.x, checkingUp.y].Equals(value)) {
+                        checkedPositions[checkingUp.X, checkingUp.Y] == 0) {
+                    checkedPositions[checkingUp.X, checkingUp.Y] = 1;
+                    if (values[checkingUp.X, checkingUp.Y].Equals(value)) {
                         positions.Add (checkingUp);
                         positionsToCheck.Enqueue (checkingUp);
                     }
                 }
 
-                Index2D checkingDown = checkingPosition + MoveVector.down;
+                BoardPosition checkingDown = checkingPosition + MoveVector.down;
                 if (IsValidIndex2D (checkingDown) &&
-                        checkedPositions[checkingDown.x, checkingDown.y] == 0) {
-                    checkedPositions[checkingDown.x, checkingDown.y] = 1;
-                    if (values[checkingDown.x, checkingDown.y].Equals(value)) {
+                        checkedPositions[checkingDown.X, checkingDown.Y] == 0) {
+                    checkedPositions[checkingDown.X, checkingDown.Y] = 1;
+                    if (values[checkingDown.X, checkingDown.Y].Equals(value)) {
                         positions.Add (checkingDown);
                         positionsToCheck.Enqueue (checkingDown);
                     }
                 }
 
-                Index2D checkingLeft = checkingPosition + MoveVector.left;
+                BoardPosition checkingLeft = checkingPosition + MoveVector.left;
                 if (IsValidIndex2D (checkingLeft) &&
-                        checkedPositions[checkingLeft.x, checkingLeft.y] == 0) {
-                    checkedPositions[checkingLeft.x, checkingLeft.y] = 1;
-                    if (values[checkingLeft.x, checkingLeft.y].Equals(value)) {
+                        checkedPositions[checkingLeft.X, checkingLeft.Y] == 0) {
+                    checkedPositions[checkingLeft.X, checkingLeft.Y] = 1;
+                    if (values[checkingLeft.X, checkingLeft.Y].Equals(value)) {
                         positions.Add (checkingLeft);
                         positionsToCheck.Enqueue (checkingLeft);
                     }
                 }
 
-                Index2D checkingRight = checkingPosition + MoveVector.right;
+                BoardPosition checkingRight = checkingPosition + MoveVector.right;
                 if (IsValidIndex2D (checkingRight) &&
-                        checkedPositions[checkingRight.x, checkingRight.y] == 0) {
-                    checkedPositions[checkingRight.x, checkingRight.y] = 1;
-                    if (values[checkingRight.x, checkingRight.y].Equals(value)) {
+                        checkedPositions[checkingRight.X, checkingRight.Y] == 0) {
+                    checkedPositions[checkingRight.X, checkingRight.Y] = 1;
+                    if (values[checkingRight.X, checkingRight.Y].Equals(value)) {
                         positions.Add (checkingRight);
                         positionsToCheck.Enqueue (checkingRight);
                     }
@@ -195,24 +196,24 @@ namespace PuzzleBoardFramework {
         }
 
         public bool IsPositionValue (int x, int y, T value) {
-            return IsPositionValue (new Index2D (x, y), value);
+            return IsPositionValue (new BoardPosition (x, y), value);
         }
 
-        public bool IsPositionValue (Index2D position, T value) {
+        public bool IsPositionValue (IBoardIndex position, T value) {
             return GetTile (position).Equals (value);
         }
 
         /// <summary>Sets the value at the given Index2D position.</summary>
-        protected void SetTile (Index2D position, T value) {
+        protected void SetTile (IBoardIndex position, T value) {
             if (!IsValidIndex2D (position)) {
                 return;
             }
-            values[position.x, position.y] = value;
+            values[position.X, position.Y] = value;
         }
 
         /// <summary>Checks if the given Index2D is within the bounds of the PuzzleBoard</summary>
-        protected bool IsValidIndex2D (Index2D index) {
-            if (index.x < 0 || index.x >= width || index.y < 0 || index.y >= height) {
+        protected bool IsValidIndex2D (IBoardIndex index) {
+            if (index.X < 0 || index.X >= width || index.Y < 0 || index.Y >= height) {
                 return false;
             } else {
                 return true;

@@ -33,10 +33,9 @@ namespace PuzzleBoardFramework {
                     hasReceivedSecondRecord = false;
                     Record<T> staticRecord = (record.newPosition == record.oldPosition) ? record : secondRecord;
                     Record<T> movingRecord = (staticRecord.Equals (record)) ? secondRecord : record;
-
-                    DestroyRenderObject (staticRecord.newPosition.x, staticRecord.newPosition.y);
-                    MoveRenderObject (movingRecord.oldPosition.x, movingRecord.oldPosition.y, movingRecord.newPosition.x, movingRecord.newPosition.y);
-                    UpdateRenderValue (movingRecord.newPosition.x, movingRecord.newPosition.y, movingRecord.newValue);
+                    DestroyRenderObject (staticRecord.newPosition.X, staticRecord.newPosition.Y);
+                    MoveRenderObject (movingRecord.oldPosition.X, movingRecord.oldPosition.Y, movingRecord.newPosition.X, movingRecord.newPosition.Y);
+                    UpdateRenderValue (movingRecord.newPosition.X, movingRecord.newPosition.Y, movingRecord.newValue);
                 }
             } else if (record.type == RecordType.Split) {
                 if (!hasReceivedSecondRecord) {
@@ -47,19 +46,19 @@ namespace PuzzleBoardFramework {
                     Record<T> staticRecord = (record.newPosition == record.oldPosition) ? record : secondRecord;
                     Record<T> movingRecord = (staticRecord.Equals (record)) ? secondRecord : record;
 
-                    MoveRenderObject (movingRecord.oldPosition.x, movingRecord.oldPosition.y, movingRecord.newPosition.x, movingRecord.newPosition.y);
-                    UpdateRenderValue (movingRecord.newPosition.x, movingRecord.newPosition.y, movingRecord.newValue);
-                    InsertNewRenderObject (staticRecord.newPosition.x, staticRecord.newPosition.y, staticRecord.newValue);
+                    MoveRenderObject (movingRecord.oldPosition.X, movingRecord.oldPosition.Y, movingRecord.newPosition.X, movingRecord.newPosition.Y);
+                    UpdateRenderValue (movingRecord.newPosition.X, movingRecord.newPosition.Y, movingRecord.newValue);
+                    InsertNewRenderObject (staticRecord.newPosition.X, staticRecord.newPosition.Y, staticRecord.newValue);
                 }
             } else if (record.type == RecordType.Move) {
                 // This is a tile that moved into an empty spot.  Find and update it's render cube.
-                MoveRenderObject (record.oldPosition.x, record.oldPosition.y, record.newPosition.x, record.newPosition.y);
+                MoveRenderObject (record.oldPosition.X, record.oldPosition.Y, record.newPosition.X, record.newPosition.Y);
             } else if (record.type == RecordType.Insert) {
-                InsertNewRenderObject (record.newPosition.x, record.newPosition.y, record.newValue);
+                InsertNewRenderObject (record.newPosition.X, record.newPosition.Y, record.newValue);
             } else if (record.type == RecordType.Delete) {
-                DestroyRenderObject (record.newPosition.x, record.newPosition.y);
+                DestroyRenderObject (record.newPosition.X, record.newPosition.Y);
             } else if (record.type == RecordType.Update) {
-                UpdateRenderValue (record.newPosition.x, record.newPosition.y, record.newValue);
+                UpdateRenderValue (record.newPosition.X, record.newPosition.Y, record.newValue);
             }
         }
 

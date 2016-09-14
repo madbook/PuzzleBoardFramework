@@ -47,8 +47,8 @@ public class ColorGameRenderer : PuzzleBoardRenderer<Color> {
         }
     }
 
-    void InsertAtAnAvailablePosition (List<Index2D> positions) {
-        foreach (Index2D position in positions) {
+    void InsertAtAnAvailablePosition (List<IBoardIndex> positions) {
+        foreach (IBoardIndex position in positions) {
             int random = Random.Range (1, 4);
             Color color;
             if (random == 1) {
@@ -58,7 +58,7 @@ public class ColorGameRenderer : PuzzleBoardRenderer<Color> {
             } else {
                 color = Color.green;
             }
-            board.UpdateTile (position.x, position.y, color);
+            board.UpdateTile (position.X, position.Y, color);
         }
     }
 }

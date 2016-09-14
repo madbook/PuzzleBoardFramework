@@ -2,34 +2,47 @@ using System;
 
 namespace PuzzleBoardFramework {
 
-    /// <summary>A 2D integer vector.</summary>
-    public struct Index2D {
-        public readonly int x;
-        public readonly int y;
+    public interface IBoardIndex {
+        int X { get; }
+        int Y { get; }
+    }
 
-        public Index2D (int x, int y) {
+    /// <summary>A 2D integer vector.</summary>
+    public struct BoardPosition : IBoardIndex {
+        readonly int x;
+        readonly int y;
+
+        public int X {
+            get { return x; }
+        }
+
+        public int Y {
+            get { return y; }
+        }
+
+        public BoardPosition (int x, int y) {
             this.x = x;
             this.y = y;
         }
 
-        public static bool operator == (Index2D a, Index2D b) {
-            return a.x == b.x && a.y == b.y;
+        public static bool operator == (BoardPosition a, BoardPosition b) {
+            return a.X == b.X && a.Y == b.Y;
         }
 
-        public static bool operator != (Index2D a, Index2D b) {
+        public static bool operator != (BoardPosition a, BoardPosition b) {
             return !(a == b);
         }
 
         public override bool Equals (object a) {
-            return this == (Index2D)a;
+            return this == (BoardPosition)a;
         }
 
         public override int GetHashCode () {
             return 0;
         }
 
-        public static Index2D operator + (Index2D position, MoveVector move) {
-            return new Index2D (position.x + move.x, position.y + move.y);
+        public static BoardPosition operator + (BoardPosition position, MoveVector move) {
+            return new BoardPosition (position.X + move.x, position.Y + move.y);
         }
     }
 
@@ -95,12 +108,12 @@ namespace PuzzleBoardFramework {
     /// <summary>Represents a change of state on the board.</summary>
     public struct Record<T> {
         public readonly RecordType type;
-        public readonly Index2D oldPosition;
-        public readonly Index2D newPosition;
+        public readonly BoardPosition oldPosition;
+        public readonly BoardPosition newPosition;
         public readonly T oldValue;
         public readonly T newValue;
 
-        public Record (RecordType type, Index2D oldPosition, Index2D newPosition, T oldValue, T newValue) {
+        public Record (RecordType type, BoardPosition oldPosition, BoardPosition newPosition, T oldValue, T newValue) {
             this.type = type;   
             this.oldPosition = oldPosition;
             this.newPosition = newPosition;
