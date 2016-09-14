@@ -14,6 +14,9 @@ namespace PuzzleBoardFramework {
         public abstract GameObject CreateRenderObject ();
         public abstract MergeStrategy<T> GetMergeStrategy ();
 
+        public bool hasReceivedSecondRecord = false;
+        public Record<T> secondRecord;
+
         public void Start () {
             mergeStrategy = GetMergeStrategy ();
             board = new PuzzleBoard<T> (width, height, mergeStrategy);
@@ -23,22 +26,38 @@ namespace PuzzleBoardFramework {
 
         public virtual void OnRecordReceived (Record<T> record) {
             if (record.type == RecordType.Merge) {
-                if (record.newPosition == record.oldPosition) {
-                    // This is the tile that remains in place.
-                    // Since we're now moving the tile that's merging into this one, this tile's render object
-                    // should get destroyed when that record is received.  We'll just do nothing here.
+                if (!hasReceivedSecondRecord) {
+                    secondRecord = record;
+                    hasReceivedSecondRecord = true;
                 } else {
-                    // This is the tile that moved during the merge.  We'll move and update it, destorying the other
-                    // render object in the process.
-                    MoveRenderObject (record.oldPosition.x, record.oldPosition.y, record.newPosition.x, record.newPosition.y);
-                    UpdateRenderValue (record.newPosition.x, record.newPosition.y, record.newValue);
+                    hasReceivedSecondRecord = false;
+                    Record<T> staticRecord = (record.newPosition == record.oldPosition) ? record : secondRecord;
+                    Record<T> movingRecord = (staticRecord.Equals (record)) ? secondRecord : record;
+
+                    DestroyRenderObject (staticRecord.newPosition.x, staticRecord.newPosition.y);
+                    MoveRenderObject (movingRecord.oldPosition.x, movingRecord.oldPosition.y, movingRecord.newPosition.x, movingRecord.newPosition.y);
+                    UpdateRenderValue (movingRecord.newPosition.x, movingRecord.newPosition.y, movingRecord.newValue);
+                }
+            } else if (record.type == RecordType.Split) {
+                if (!hasReceivedSecondRecord) {
+                    secondRecord = record;
+                    hasReceivedSecondRecord = true;
+                } else {
+                    hasReceivedSecondRecord = false;
+                    Record<T> staticRecord = (record.newPosition == record.oldPosition) ? record : secondRecord;
+                    Record<T> movingRecord = (staticRecord.Equals (record)) ? secondRecord : record;
+
+                    MoveRenderObject (movingRecord.oldPosition.x, movingRecord.oldPosition.y, movingRecord.newPosition.x, movingRecord.newPosition.y);
+                    UpdateRenderValue (movingRecord.newPosition.x, movingRecord.newPosition.y, movingRecord.newValue);
+                    InsertNewRenderObject (staticRecord.newPosition.x, staticRecord.newPosition.y, staticRecord.newValue);
                 }
             } else if (record.type == RecordType.Move) {
                 // This is a tile that moved into an empty spot.  Find and update it's render cube.
                 MoveRenderObject (record.oldPosition.x, record.oldPosition.y, record.newPosition.x, record.newPosition.y);
-                UpdateRenderValue (record.newPosition.x, record.newPosition.y, record.newValue);
             } else if (record.type == RecordType.Insert) {
                 InsertNewRenderObject (record.newPosition.x, record.newPosition.y, record.newValue);
+            } else if (record.type == RecordType.Delete) {
+                DestroyRenderObject (record.newPosition.x, record.newPosition.y);
             } else if (record.type == RecordType.Update) {
                 UpdateRenderValue (record.newPosition.x, record.newPosition.y, record.newValue);
             }
@@ -51,7 +70,6 @@ namespace PuzzleBoardFramework {
         public void MoveRenderObject (int oldX, int oldY, int newX, int newY) {
             GameObject obj = renderObjects[oldX, oldY];
             if (obj != null) {
-                DestroyRenderObject (newX, newY);
                 UpdateRenderPosition (obj, newX, newY);
                 renderObjects[newX, newY] = obj;
                 renderObjects[oldX,oldY] = null;

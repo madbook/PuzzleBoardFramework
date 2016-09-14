@@ -110,10 +110,6 @@ namespace PuzzleBoardFramework {
         }
 
         public void UndoRecord (Record<T> record) {
-            if (!IsPositionValue (record.newPosition, record.newValue)) {
-                return;
-            }
-
             if (record.type == RecordType.Move) {
                 if (!IsPositionValue (record.oldPosition, default (T))) {
                     return;
