@@ -7,7 +7,7 @@ namespace PuzzleBoardFramework {
         public int height = 4;
         public PuzzleBoard<T> board;
 
-        GameObject[,] renderObjects;
+        BaseBoard<GameObject> renderObjects;
         MergeStrategy<T> mergeStrategy;
 
         public abstract void UpdateRenderValue (int x, int y, T value);
@@ -20,7 +20,7 @@ namespace PuzzleBoardFramework {
         public void Start () {
             mergeStrategy = GetMergeStrategy ();
             board = new PuzzleBoard<T> (width, height, mergeStrategy);
-            renderObjects = new GameObject[width, height];
+            renderObjects = new BaseBoard<GameObject> (width, height);
             board.RegisterConsumer (OnRecordReceived);
         }
 
@@ -63,15 +63,15 @@ namespace PuzzleBoardFramework {
         }
 
         public GameObject GetRenderObject (int x, int y) {
-            return renderObjects[x,y];
+            return renderObjects.GetTile (x, y);
         } 
 
         public void MoveRenderObject (int oldX, int oldY, int newX, int newY) {
-            GameObject obj = renderObjects[oldX, oldY];
+            GameObject obj = GetRenderObject (oldX, oldY);
             if (obj != null) {
                 UpdateRenderPosition (obj, newX, newY);
-                renderObjects[newX, newY] = obj;
-                renderObjects[oldX,oldY] = null;
+                renderObjects.UpdateTile (newX, newY, obj);
+                renderObjects.UpdateTile (oldX, oldY, null);
             }
         }
 
@@ -81,17 +81,18 @@ namespace PuzzleBoardFramework {
 
         public void InsertNewRenderObject (int x, int y, T value) {
             GameObject obj = CreateRenderObject ();
-            renderObjects[x, y] = obj;
+            renderObjects.UpdateTile (x, y, obj);
             UpdateRenderPosition (obj, x, y);
             UpdateRenderValue (x, y, value);
             obj.transform.parent = transform;
         }
 
         public void DestroyRenderObject (int x, int y) {
-            if (renderObjects[x,y] != null) {
-                Destroy (renderObjects[x,y]);
+            GameObject obj = renderObjects.GetTile (x, y);
+            if (obj != null) {
+                Destroy (obj);
+                renderObjects.UpdateTile (x, y, null);
             }
-            renderObjects[x,y] = null;
         }
 
         public void ClearRenderObjects () {
