@@ -43,8 +43,6 @@ namespace PuzzleBoardFramework {
         }
 
         public virtual void MergeTile (IBoardIndex fromPosition, IBoardIndex toPosition, T value) {
-            T valueFrom = GetTile (fromPosition);
-            T valueInto = GetTile (toPosition);
             SetTile (toPosition, value);
             SetTile (fromPosition, default (T));
         }
