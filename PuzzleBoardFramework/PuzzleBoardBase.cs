@@ -20,16 +20,33 @@ namespace PuzzleBoardFramework {
             UpdateTile (new BoardPosition (x, y), value);
         }
 
-        /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
-        public virtual void UpdateTile (IBoardIndex position, T value) {
-            SetTile (position, value);
-        }
-
         /// <summary>Insert, update, or delete each value in a list of Index2D positions.</summary> 
         public void UpdateTile (List<IBoardIndex> positions, T value) {
             foreach (IBoardIndex position in positions) {
                 UpdateTile (position, value);
             }
+        }
+
+        /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
+        public virtual void UpdateTile (IBoardIndex position, T value) {
+            SetTile (position, value);
+        }
+
+        public virtual void MoveTile (IBoardIndex fromPosition, IBoardIndex toPosition) {
+            if (!GetTile (toPosition).Equals (default (T))) {
+                return;
+            }
+
+            T value = GetTile (fromPosition);
+            SetTile (toPosition, value);
+            SetTile (fromPosition, default (T));
+        }
+
+        public virtual void MergeTile (IBoardIndex fromPosition, IBoardIndex toPosition, T value) {
+            T valueFrom = GetTile (fromPosition);
+            T valueInto = GetTile (toPosition);
+            SetTile (toPosition, value);
+            SetTile (fromPosition, default (T));
         }
 
         /// <summary>Returns the value at the given x and y coordinates.</summary>
