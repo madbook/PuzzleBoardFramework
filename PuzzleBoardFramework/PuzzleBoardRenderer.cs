@@ -31,7 +31,7 @@ namespace PuzzleBoardFramework {
                     hasReceivedSecondRecord = true;
                 } else {
                     hasReceivedSecondRecord = false;
-                    Record<T> staticRecord = (record.newPosition == record.oldPosition) ? record : secondRecord;
+                    Record<T> staticRecord = (record.newPosition.Equals (record.oldPosition)) ? record : secondRecord;
                     Record<T> movingRecord = (staticRecord.Equals (record)) ? secondRecord : record;
                     DestroyRenderObject (staticRecord.newPosition.X, staticRecord.newPosition.Y);
                     MoveRenderObject (movingRecord.oldPosition.X, movingRecord.oldPosition.Y, movingRecord.newPosition.X, movingRecord.newPosition.Y);
@@ -43,7 +43,7 @@ namespace PuzzleBoardFramework {
                     hasReceivedSecondRecord = true;
                 } else {
                     hasReceivedSecondRecord = false;
-                    Record<T> staticRecord = (record.newPosition == record.oldPosition) ? record : secondRecord;
+                    Record<T> staticRecord = (record.newPosition.Equals (record.oldPosition)) ? record : secondRecord;
                     Record<T> movingRecord = (staticRecord.Equals (record)) ? secondRecord : record;
 
                     MoveRenderObject (movingRecord.oldPosition.X, movingRecord.oldPosition.Y, movingRecord.newPosition.X, movingRecord.newPosition.Y);

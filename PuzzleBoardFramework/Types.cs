@@ -25,22 +25,6 @@ namespace PuzzleBoardFramework {
             this.y = y;
         }
 
-        public static bool operator == (BoardPosition a, BoardPosition b) {
-            return a.X == b.X && a.Y == b.Y;
-        }
-
-        public static bool operator != (BoardPosition a, BoardPosition b) {
-            return !(a == b);
-        }
-
-        public override bool Equals (object a) {
-            return this == (BoardPosition)a;
-        }
-
-        public override int GetHashCode () {
-            return 0;
-        }
-
         public static BoardPosition operator + (BoardPosition position, MoveVector move) {
             return new BoardPosition (position.X + move.x, position.Y + move.y);
         }
