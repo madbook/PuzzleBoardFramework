@@ -15,20 +15,15 @@ namespace PuzzleBoardFramework {
             values = new T[width,height];
         }
 
-        /// <summary>Insert, update, or delete the value at the given x and y coordinates.</summary>
-        public void UpdateTile (int x, int y, T value) {
-            UpdateTile (new BoardPosition (x, y), value);
-        }
-
         /// <summary>Insert, update, or delete each value in a list of Index2D positions.</summary> 
-        public void UpdateTile (List<IBoardIndex> positions, T value) {
+        public void UpdateTiles (List<IBoardIndex> positions, T value) {
             foreach (IBoardIndex position in positions) {
-                UpdateTile (position, value);
+                UpdateTiles (position, value);
             }
         }
 
         /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
-        public virtual void UpdateTile (IBoardIndex position, T value) {
+        public virtual void UpdateTiles (IBoardIndex position, T value) {
             SetTile (position, value);
         }
 
@@ -45,11 +40,6 @@ namespace PuzzleBoardFramework {
         public virtual void MergeTile (IBoardIndex fromPosition, IBoardIndex toPosition, T value) {
             SetTile (toPosition, value);
             SetTile (fromPosition, default (T));
-        }
-
-        /// <summary>Returns the value at the given x and y coordinates.</summary>
-        public T GetTile (int x, int y) {
-            return values[x, y];
         }
 
         /// <summary>Returns the value at the given Index2D position.</summary>
@@ -137,11 +127,6 @@ namespace PuzzleBoardFramework {
             return matches;
         }
 
-        /// <summary>Get a list of all orthaganally connected positions that match the value at the given x and y coordinates.</summary>
-        public List<IBoardIndex> GetIdenticalAdjacentPositions (T value, int x, int y) {
-            return GetIdenticalAdjacentPositions (value, new BoardPosition (x, y));
-        }
-
         /// <summary>Get a list of all orthaganally connected positions that match the value at the given Index2D position.</summary>
         public List<IBoardIndex> GetIdenticalAdjacentPositions (T value, IBoardIndex position) {
             List<IBoardIndex> positions = new List<IBoardIndex> ();
@@ -208,10 +193,6 @@ namespace PuzzleBoardFramework {
                     values[x,y] = default (T);
                 }
             }
-        }
-
-        public bool IsPositionValue (int x, int y, T value) {
-            return IsPositionValue (new BoardPosition (x, y), value);
         }
 
         public bool IsPositionValue (IBoardIndex position, T value) {

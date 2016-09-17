@@ -57,6 +57,6 @@ public class ThreesRenderer : PuzzleBoardRenderer<int> {
             return;
         }
         IBoardIndex position = positions[0];
-        board.UpdateTile (position.X, position.Y, Random.Range (1, 4));
+        board.UpdateTiles (position, Random.Range (1, 4));
     }
 }

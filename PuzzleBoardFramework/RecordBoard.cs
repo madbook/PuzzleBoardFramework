@@ -14,7 +14,7 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
-        public override void UpdateTile (IBoardIndex position, T value) {
+        public override void UpdateTiles (IBoardIndex position, T value) {
             T oldValue = GetTile (position);
 
             bool newIsEmpty = value.Equals (default (T));

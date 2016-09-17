@@ -63,7 +63,7 @@ namespace PuzzleBoardFramework {
         }
 
         public GameObject GetRenderObject (int x, int y) {
-            return renderObjects.GetTile (x, y);
+            return renderObjects.GetTile (new BoardPosition (x, y));
         }
 
         public GameObject GetRenderObject (IBoardIndex position) {
@@ -78,8 +78,8 @@ namespace PuzzleBoardFramework {
             GameObject obj = GetRenderObject (oldPosisition);
             if (obj != null) {
                 UpdateRenderPosition (obj, newPosition);
-                renderObjects.UpdateTile (newPosition, obj);
-                renderObjects.UpdateTile (oldPosisition, null);
+                renderObjects.UpdateTiles (newPosition, obj);
+                renderObjects.UpdateTiles (oldPosisition, null);
             }
         }
 
@@ -89,17 +89,19 @@ namespace PuzzleBoardFramework {
 
         public void InsertNewRenderObject (int x, int y, T value) {
             GameObject obj = CreateRenderObject ();
-            renderObjects.UpdateTile (x, y, obj);
-            UpdateRenderPosition (obj, new BoardPosition (x, y));
+            BoardPosition position = new BoardPosition (x, y);
+            renderObjects.UpdateTiles (position, obj);
+            UpdateRenderPosition (obj, position);
             UpdateRenderValue (x, y, value);
             obj.transform.parent = transform;
         }
 
         public void DestroyRenderObject (int x, int y) {
-            GameObject obj = renderObjects.GetTile (x, y);
+            BoardPosition position = new BoardPosition (x, y);
+            GameObject obj = renderObjects.GetTile (position);
             if (obj != null) {
                 Destroy (obj);
-                renderObjects.UpdateTile (x, y, null);
+                renderObjects.UpdateTiles (position, null);
             }
         }
 
