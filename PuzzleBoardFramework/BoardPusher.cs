@@ -12,11 +12,11 @@ namespace PuzzleBoardFramework {
         // to PushTile
     }
 
-    public class PushBoard<T> : BaseBoard<MoveVector>, IPushableBoard {
+    public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard {
         PuzzleBoard<T> board;
         MergeStrategy<T> mergeStrategy;
 
-        public PushBoard (int width, int height, PuzzleBoard<T> board, MergeStrategy<T> mergeStrategy) : base (width, height) {
+        public BoardPusher (int width, int height, PuzzleBoard<T> board, MergeStrategy<T> mergeStrategy) : base (width, height) {
             this.board = board;
             this.mergeStrategy = mergeStrategy;
         }
