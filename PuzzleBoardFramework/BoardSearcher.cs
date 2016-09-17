@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace PuzzleBoardFramework {
 
+    /// <summary>Provides an ISearchableBoard interface to an existing IUpdatableBoard instance.</summary>
     public class BoardSearcher<T> : ISearchableBoard<T> {
 
         IUpdatableBoard<T> board;

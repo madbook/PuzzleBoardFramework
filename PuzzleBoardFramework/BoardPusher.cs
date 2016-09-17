@@ -2,12 +2,13 @@ using System.Collections.Generic;
 
 namespace PuzzleBoardFramework {
 
-    public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard {
+    /// <summary>Provides an IPushableBoard interface to an existing IUpdatableBoard instance.</summary>
+    public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard<T> {
 
         IUpdatableBoard<T> board;
         IMergeStrategy<T> mergeStrategy;
 
-        public BoardPusher (PuzzleBoard<T> board, IMergeStrategy<T> mergeStrategy) : base (board.Width, board.Height) {
+        public BoardPusher (IUpdatableBoard<T> board, IMergeStrategy<T> mergeStrategy) : base (board.Width, board.Height) {
             this.board = board;
             this.mergeStrategy = mergeStrategy;
         }
@@ -205,4 +206,3 @@ namespace PuzzleBoardFramework {
     }
 
 }
-

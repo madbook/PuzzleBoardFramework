@@ -37,6 +37,12 @@ namespace PuzzleBoardFramework {
         /// </remarks>
         void UpdateTile (IBoardIndex position, T value);
 
+        /// <summary>Update each tile in the given list of positions with the given value.</summary>
+        /// <remarks>
+        ///     Implementations should call either InsertTile, DeleteTile, or UpdateTile for each position.
+        /// </remarks>
+        void UpdateTiles (List<IBoardIndex> positions, T value);
+
         /// <summary>Set the value at position to default (T).</summary>
         void DeleteTile (IBoardIndex position);
 
@@ -79,6 +85,18 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Set the MoveVector at each position to the given value.</summary> 
         void PushTiles (List<IBoardIndex> positions, MoveVector push);
+
+        /// <summary>Perform all possible movements and merges based on the currently set movement vectors.</summary>
+        void ApplyMoveVectors ();
+
+        /// <summary>Perform movements and merges in the specified direction based on the currently set movement vectors.</summary>
+        void ApplyMoveVectors (MoveVector move);
+    }
+
+    /// <summary>An IPushableBoard interface with additional type-specific methods.</summary>
+    public interface IPushableBoard<T> : IPushableBoard {
+        /// <summary>Set the MoveVector at all posisions matching the given value.</summary>
+        void PushAllMatching (MoveVector move, T matchValue);
     }
 
     /// <summary>Provides methods to get lists of positions on a tile container.</summary>
@@ -157,6 +175,10 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Publish an update that will be passed to all subscribers.</summary>
         void Publish (T update);
+
+        /// TODO – this doesn't seem like the best place for this.
+        /// <summary>Should revert a previously published record.</summary>
+        void UndoRecord (T record);
     }
 
     /// <summary>Provides methods for determining how tiles should interact when pushed around.</summary>

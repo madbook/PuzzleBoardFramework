@@ -2,26 +2,28 @@
 using UnityEngine;
 using PuzzleBoardFramework;
 
-public class ColorMergeStrategy : GenericMergeStrategy<Color> {
-    public override bool ShouldMerge (Color from, Color into) {
-        return true;
-    }
-
-    public override Color Merge (Color from, Color into) {
-        return Color.Lerp (from, into, .5f);
-    }
-}
-
-public class ColorRenderer : BoardRenderer<Color> {
-    public ColorRenderer (BaseBoard<Color> board, Transform parent) : base (board, parent) {
-    }
-
-    public override void UpdateRenderValue (GameObject obj, Color value) {
-        obj.GetComponent<MeshRenderer> ().material.color = value;
-    }
-}
-
 public class ColorGameController : BoardController<Color> {
+
+    class ColorMergeStrategy : GenericMergeStrategy<Color> {
+        public override bool ShouldMerge (Color from, Color into) {
+            return true;
+        }
+
+        public override Color Merge (Color from, Color into) {
+            return Color.Lerp (from, into, .5f);
+        }
+    }
+
+    class ColorRenderer : BoardRenderer<Color> {
+        public ColorRenderer (BaseBoard<Color> board, Transform parent) : base (board, parent) {
+        }
+
+        public override void UpdateRenderValue (GameObject obj, Color value) {
+            obj.GetComponent<MeshRenderer> ().material.color = value;
+        }
+    }
+
+
     public override IMergeStrategy<Color> GetMergeStrategy () {
         return new ColorMergeStrategy ();
     }
@@ -32,21 +34,21 @@ public class ColorGameController : BoardController<Color> {
 
     void Update () {
         if (Input.GetKeyDown (KeyCode.LeftArrow)) {
-            board.PushAll (MoveVector.left);
-            board.ApplyMovementAndReset (MoveVector.left);
-            InsertAtAnAvailablePosition (board.GetPositionsInColumnMatching (width - 1, default (Color)));
+            PushAll (MoveVector.left);
+            ApplyMoveVectors (MoveVector.left);
+            InsertAtAnAvailablePosition (GetPositionsInColumnMatching (width - 1, default (Color)));
         } else if (Input.GetKeyDown (KeyCode.RightArrow)) {
-            board.PushAll (MoveVector.right);
-            board.ApplyMovementAndReset (MoveVector.right);
-            InsertAtAnAvailablePosition (board.GetPositionsInColumnMatching (0, default (Color)));
+            PushAll (MoveVector.right);
+            ApplyMoveVectors (MoveVector.right);
+            InsertAtAnAvailablePosition (GetPositionsInColumnMatching (0, default (Color)));
         } else if (Input.GetKeyDown (KeyCode.DownArrow)) {
-            board.PushAll (MoveVector.down);
-            board.ApplyMovementAndReset (MoveVector.down);
-            InsertAtAnAvailablePosition (board.GetPositionsInRowMatching (height - 1, default (Color)));
+            PushAll (MoveVector.down);
+            ApplyMoveVectors (MoveVector.down);
+            InsertAtAnAvailablePosition (GetPositionsInRowMatching (height - 1, default (Color)));
         } else if (Input.GetKeyDown (KeyCode.UpArrow)) {
-            board.PushAll (MoveVector.up);
-            board.ApplyMovementAndReset (MoveVector.up);
-            InsertAtAnAvailablePosition (board.GetPositionsInRowMatching (0, default (Color)));
+            PushAll (MoveVector.up);
+            ApplyMoveVectors (MoveVector.up);
+            InsertAtAnAvailablePosition (GetPositionsInRowMatching (0, default (Color)));
         }
     }
 
@@ -61,7 +63,8 @@ public class ColorGameController : BoardController<Color> {
             } else {
                 color = Color.green;
             }
-            board.UpdateTile (position, color);
+            UpdateTile (position, color);
         }
     }
+
 }

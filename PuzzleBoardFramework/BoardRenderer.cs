@@ -1,11 +1,9 @@
 using UnityEngine;
 
+// TODO - BoardRenderer should grab values directly from the board
 namespace PuzzleBoardFramework {
 
-    /*
-        TODO - BoardRenderer should grab values directly from the board
-    */
-
+    /// <summary>Provides an IBoardRenderer interface to an existing IBoard instance.</summary>
     public class BoardRenderer<T> : BaseBoard<GameObject>, IBoardRenderer<T> {
 
         Transform parent;

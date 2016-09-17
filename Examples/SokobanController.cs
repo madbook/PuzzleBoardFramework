@@ -31,11 +31,13 @@ public class SokobanController : BoardController<int> {
         }
     }
 
+
     ITurnRecorder<Record<int>> history;
     bool recordingHistory;
 
     public new void Start () {
         base.Start ();
+        Subscribe (OnRecordReceived);
         history = new History<Record<int>> ();
         Init ();
         recordingHistory = true;
@@ -50,26 +52,24 @@ public class SokobanController : BoardController<int> {
     }
 
     void Init () {
-        board.UpdateTiles (board.GetPositionsInColumn (0), WALL_TYPE);
-        board.UpdateTiles (board.GetPositionsInColumn (width - 1), WALL_TYPE);
-        board.UpdateTiles (board.GetPositionsInRow (0), WALL_TYPE);
-        board.UpdateTiles (board.GetPositionsInRow (height - 1), WALL_TYPE);
-        board.UpdateTile (new BoardPosition (1, 1), PLAYER_TYPE);
-        board.UpdateTile (new BoardPosition (2, 2), CRATE_TYPE);
-        board.UpdateTile (new BoardPosition (2, 3), CRATE_TYPE);
+        UpdateTiles (GetPositionsInColumn (0), WALL_TYPE);
+        UpdateTiles (GetPositionsInColumn (width - 1), WALL_TYPE);
+        UpdateTiles (GetPositionsInRow (0), WALL_TYPE);
+        UpdateTiles (GetPositionsInRow (height - 1), WALL_TYPE);
+        UpdateTile (new BoardPosition (1, 1), PLAYER_TYPE);
+        UpdateTile (new BoardPosition (2, 2), CRATE_TYPE);
+        UpdateTile (new BoardPosition (2, 3), CRATE_TYPE);
     }
 
     public void Reset () {
         recordingHistory = false;
-        board.Clear ();
-        boardRenderer.Clear ();
+        Clear ();
         history.ClearAll ();
         Init ();
         recordingHistory = true;
     }
 
-    public override void OnRecordReceived (Record<int> record) {
-        base.OnRecordReceived (record);
+    new void OnRecordReceived (Record<int> record) {
         if (recordingHistory) {
             history.AddRecord (record);
         }
@@ -81,7 +81,7 @@ public class SokobanController : BoardController<int> {
         }
         recordingHistory = false;
         foreach (Record<int> record in history.IterateLastTurn ()) {
-            board.UndoRecord (record);
+            UndoRecord (record);
         }
         history.ClearLastTurn ();
         recordingHistory = true;
@@ -111,8 +111,8 @@ public class SokobanController : BoardController<int> {
         }
 
         if (move != MoveVector.zero) {
-            board.PushAllMatching (move, PLAYER_TYPE);
-            board.ApplyMovementAndReset (move);
+            PushAllMatching (move, PLAYER_TYPE);
+            ApplyMoveVectors (move);
             history.NewTurn ();
         }
     }

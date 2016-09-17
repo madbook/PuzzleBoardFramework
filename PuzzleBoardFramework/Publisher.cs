@@ -15,6 +15,10 @@ namespace PuzzleBoardFramework {
                 subscriber (update);
             }
         }
+
+        // TODO this is definitely wrong
+        public virtual void UndoRecord (T record) {
+        }
     }
 
 }
