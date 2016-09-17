@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace PuzzleBoardFramework {
 
-    public class PuzzleBoard<T> : RecordBoard<T>, ISearchableBoard<T>, IPushableBoard {
+    public class PuzzleBoard<T> : PublisherBoard<T>, ISearchableBoard<T>, IPushableBoard {
         BoardPusher<T> pushBoard;
 
         /// <summary>Create a new PuzzleBoard using a default MergeStrategy.</summary>

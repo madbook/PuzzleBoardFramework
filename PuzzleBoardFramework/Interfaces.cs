@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -131,6 +132,15 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Save the current turn.</summary>
         void NewTurn ();
+    }
+
+    /// <summary>Provides methods for publishing and subscribing to updates.</summary>
+    public interface IPublisher<T> {
+        /// <summary>Add a callback action that will be called with each published update.</summary>
+        void Subscribe (Action<T> subscriber);
+
+        /// <summary>Publish an update that will be passed to all subscribers.</summary>
+        void Publish (T update);
     }
 
 }

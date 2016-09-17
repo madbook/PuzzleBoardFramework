@@ -20,7 +20,7 @@ namespace PuzzleBoardFramework {
             mergeStrategy = GetMergeStrategy ();
             board = new PuzzleBoard<T> (width, height, mergeStrategy);
             boardRenderer = GetBoardRenderer (board, transform);
-            board.RegisterConsumer (OnRecordReceived);
+            board.Subscribe (OnRecordReceived);
         }
 
         public virtual void OnRecordReceived (Record<T> record) {
