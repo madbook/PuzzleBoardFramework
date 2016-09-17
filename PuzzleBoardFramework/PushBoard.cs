@@ -5,9 +5,8 @@ namespace PuzzleBoardFramework {
     public interface IPushableBoard {
         // TODO – just rename to Push so they are all one method
         void PushAll (MoveVector push);
-        void PushTile (int x, int y, MoveVector push);
         void PushTile (IBoardIndex position, MoveVector push);
-        void PushTile (List<IBoardIndex> positions, MoveVector push);
+        void PushTiles (List<IBoardIndex> positions, MoveVector push);
         // PushAllMatching skipped because only method that has type
         // same funcationality can be accomplished by passing a list of matched positions
         // to PushTile
@@ -27,11 +26,6 @@ namespace PuzzleBoardFramework {
             PushAllMatching (push, default (T));
         }
 
-        /// <summary>Set the movement vector of the cell at the given x and y coordinates to the given direction.</summary>
-        public void PushTile (int x, int y, MoveVector push) {
-            PushTile (new BoardPosition (x, y), push);
-        }
-
         /// <summary>Set the movement vector of the cell at the given Index2D position to the given direction.</summary>
         public void PushTile (IBoardIndex position, MoveVector push) {
             if (IsValidIndex2D (position)) {
@@ -40,7 +34,7 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Set the movement vector of each cell in a list of Index2D positions to the given direction.</summary>
-        public void PushTile (List<IBoardIndex> positions, MoveVector push) {
+        public void PushTiles (List<IBoardIndex> positions, MoveVector push) {
             foreach (IBoardIndex position in positions) {
                 PushTile (position, push);
             }
