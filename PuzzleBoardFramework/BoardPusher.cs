@@ -23,7 +23,16 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Set movement vectors on cells to the given direction.</summary>
         public void PushAll (MoveVector push) {
-            PushAllMatching (push, default (T));
+            if (push == MoveVector.zero) {
+                return;
+            }
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    BoardPosition position = new BoardPosition(x, y);
+                    UpdateTile (position, push);
+                }
+            }
         }
 
         /// <summary>Set the movement vector of the cell at the given Index2D position to the given direction.</summary>
