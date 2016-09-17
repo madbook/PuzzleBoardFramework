@@ -8,7 +8,7 @@ public class ThreesMergeStrategy : IntMergeStrategy {
     }
 }
 
-public class ThreesRenderer : PuzzleBoardRenderer<int> {
+public class ThreesRenderer : BoardController<int> {
     public override MergeStrategy<int> GetMergeStrategy () {
         return new ThreesMergeStrategy ();
     }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace PuzzleBoardFramework {
 
-    public abstract class PuzzleBoardRenderer<T> : MonoBehaviour, IUpdatableBoard<T> {
+    public abstract class BoardController<T> : MonoBehaviour, IUpdatableBoard<T> {
         public int width = 4;
         public int height = 4;
         public PuzzleBoard<T> board;

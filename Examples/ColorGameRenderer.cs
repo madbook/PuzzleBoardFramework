@@ -12,7 +12,7 @@ public class ColorMergeStrategy : GenericMergeStrategy<Color> {
     }
 }
 
-public class ColorGameRenderer : PuzzleBoardRenderer<Color> {
+public class ColorGameRenderer : BoardController<Color> {
     public override MergeStrategy<Color> GetMergeStrategy () {
         return new ColorMergeStrategy ();
     }

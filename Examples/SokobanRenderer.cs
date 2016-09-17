@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using PuzzleBoardFramework;
 
-public class SokobanRenderer : PuzzleBoardRenderer<int> {
+public class SokobanRenderer : BoardController<int> {
 
     const int PLAYER_TYPE = 1;
     const int CRATE_TYPE = 2;
