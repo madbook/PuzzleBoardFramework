@@ -8,12 +8,12 @@ namespace PuzzleBoardFramework {
         /// <summary>Create a new PuzzleBoard using a default MergeStrategy.</summary>
         public PuzzleBoard (int width, int height) : base (width, height) {
             IMergeStrategy<T> mergeStrategy = MergeStrategy.GetDefaultStrategy<T> ();
-            pushBoard = new BoardPusher<T> (width, height, this, mergeStrategy);
+            pushBoard = new BoardPusher<T> (this, mergeStrategy);
         }
 
         /// <summary>Create a new PuzzleBoard with a custom MergeStrategy.</summary>
         public PuzzleBoard (int width, int height, IMergeStrategy<T> mergeStrategy) : base (width, height) {
-            pushBoard = new BoardPusher<T> (width, height, this, mergeStrategy);
+            pushBoard = new BoardPusher<T> (this, mergeStrategy);
         }
 
         /// <summary>Try to move each cell by it's currently set move vector, then reset all move vectors.</summary>

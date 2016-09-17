@@ -3,10 +3,10 @@ using System.Collections.Generic;
 namespace PuzzleBoardFramework {
 
     public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard {
-        PuzzleBoard<T> board;
+        IUpdatableBoard<T> board;
         IMergeStrategy<T> mergeStrategy;
 
-        public BoardPusher (int width, int height, PuzzleBoard<T> board, IMergeStrategy<T> mergeStrategy) : base (width, height) {
+        public BoardPusher (PuzzleBoard<T> board, IMergeStrategy<T> mergeStrategy) : base (board.width, board.height) {
             this.board = board;
             this.mergeStrategy = mergeStrategy;
         }
