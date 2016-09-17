@@ -31,22 +31,17 @@ namespace PuzzleBoardFramework {
             pushBoard.PushAll (push);
         }
 
-        /// <summary>Set the movement vector of the cell at the given x and y coordinates to the given direction.</summary>
-        public void PushTile (int x, int y, MoveVector push) {
-            pushBoard.PushTile (x, y, push);
-        }
-
         /// <summary>Set the movement vector of the cell at the given Index2D position to the given direction.</summary>
         public void PushTile (IBoardIndex position, MoveVector push) {
             pushBoard.PushTile (position, push);
         }
 
         /// <summary>Set the movement vector of each cell in a list of Index2D positions to the given direction.</summary>
-        public void PushTile (List<IBoardIndex> positions, MoveVector push) {
-            pushBoard.PushTile (positions, push);
+        public void PushTiles (List<IBoardIndex> positions, MoveVector push) {
+            pushBoard.PushTiles (positions, push);
         }
 
-        /// <summary>Set movement vectors at all cells matching the value to the given direction.</summary>
+        /// <summary>Set movsement vectors at all cells matching the value to the given direction.</summary>
         public void PushAllMatching (MoveVector push, T matchValue)  {
             pushBoard.PushAllMatching (push, matchValue);
         }
