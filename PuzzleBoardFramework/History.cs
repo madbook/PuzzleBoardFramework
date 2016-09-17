@@ -3,21 +3,7 @@ using System.Collections.Generic;
 
 namespace PuzzleBoardFramework {
 
-    public interface IHistory<T> {
-        int Count { get; }
-
-        IEnumerable<T> IterateLastTurn ();
-
-        void AddRecord (T value);
-
-        void ClearLastTurn ();
-
-        void ClearAll ();
-
-        void NewTurn ();
-    }
-
-    public class History<T> : IHistory<T> {
+    public class History<T> : ITurnRecorder<T> {
 
         Stack<Stack<T>> history = new Stack<Stack<T>> ();
         Stack<T> currentTurn = new Stack<T> ();

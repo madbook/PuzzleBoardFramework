@@ -2,10 +2,6 @@ using UnityEngine;
 
 namespace PuzzleBoardFramework {
 
-    public interface IAnimatableRenderer {
-        bool Animating { get; set; }
-    }
-
     public abstract class BoardRenderer<T> : IUpdatableBoard<T> {
         protected int width;
         protected int height;

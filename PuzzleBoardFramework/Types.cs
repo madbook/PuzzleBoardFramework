@@ -2,11 +2,6 @@ using System;
 
 namespace PuzzleBoardFramework {
 
-    public interface IBoardIndex {
-        int X { get; }
-        int Y { get; }
-    }
-
     /// <summary>A 2D integer vector.</summary>
     public struct BoardPosition : IBoardIndex {
         readonly int x;

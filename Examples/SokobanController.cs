@@ -35,7 +35,7 @@ public class SokobanController : BoardController<int> {
         }
     }
 
-    IHistory<Record<int>> history;
+    ITurnRecorder<Record<int>> history;
     bool recordingHistory;
 
     public new void Start () {

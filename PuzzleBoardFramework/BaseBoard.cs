@@ -2,16 +2,6 @@ using System.Collections.Generic;
 
 namespace PuzzleBoardFramework {
 
-    public interface IUpdatableBoard<T> {
-        void UpdateTile (IBoardIndex position, T value);
-        void DeleteTile (IBoardIndex position);
-        void InsertTile (IBoardIndex position, T value);
-        void MoveTile (IBoardIndex fromPosition, IBoardIndex toPosition);
-        void MergeTile (IBoardIndex fromPosition, IBoardIndex toPosition, T value);
-        void SplitTile (IBoardIndex fromPosition, IBoardIndex toPosition, T fromValue, T toValue);
-        void Clear ();
-    }
-
     public class BaseBoard<T> : IUpdatableBoard<T> {
         public readonly int width;
         public readonly int height;

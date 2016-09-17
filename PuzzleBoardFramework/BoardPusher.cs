@@ -2,16 +2,6 @@ using System.Collections.Generic;
 
 namespace PuzzleBoardFramework {
 
-    public interface IPushableBoard {
-        // TODO – just rename to Push so they are all one method
-        void PushAll (MoveVector push);
-        void PushTile (IBoardIndex position, MoveVector push);
-        void PushTiles (List<IBoardIndex> positions, MoveVector push);
-        // PushAllMatching skipped because only method that has type
-        // same funcationality can be accomplished by passing a list of matched positions
-        // to PushTile
-    }
-
     public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard {
         PuzzleBoard<T> board;
         MergeStrategy<T> mergeStrategy;
