@@ -33,7 +33,7 @@ public class ThreesRenderer : BoardRenderer<int> {
 }
 
 public class ThreesController : BoardController<int> {
-    public override MergeStrategy<int> GetMergeStrategy () {
+    public override IMergeStrategy<int> GetMergeStrategy () {
         return new ThreesMergeStrategy ();
     }
 

@@ -143,4 +143,22 @@ namespace PuzzleBoardFramework {
         void Publish (T update);
     }
 
+    /// <summary>Provides methods for determining how tiles should interact when pushed around.</summary>
+    public interface IMergeStrategy<T> {
+        /// <summary>Determines if the from value should push the into value.</summary>
+        bool ShouldPush (T from, T into);
+
+        /// <summary>Determines if the from value should merge with the into value.</summary>
+        bool ShouldMerge (T from, T into);
+
+        /// <summary>Provides a new value when the two given values merge.</summary>
+        T Merge (T from, T into);
+
+        /// <summary>Deprecated: Returns if the given value should be considered empty.</summary> 
+        bool IsEmpty (T value);
+
+        /// <summary>Deprecated: Returns a new empty value.</summary>
+        T Empty ();
+    }
+
 }

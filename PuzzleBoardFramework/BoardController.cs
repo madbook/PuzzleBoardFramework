@@ -8,12 +8,12 @@ namespace PuzzleBoardFramework {
         
         protected BoardRenderer<T> boardRenderer;
         protected PuzzleBoard<T> board;
-        MergeStrategy<T> mergeStrategy;
+        IMergeStrategy<T> mergeStrategy;
 
         bool hasReceivedSecondRecord = false;
         Record<T> secondRecord;
 
-        public abstract MergeStrategy<T> GetMergeStrategy ();
+        public abstract IMergeStrategy<T> GetMergeStrategy ();
         public abstract BoardRenderer<T> GetBoardRenderer (BaseBoard<T> board, Transform parent);
 
         public void Start () {

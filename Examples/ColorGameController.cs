@@ -26,7 +26,7 @@ public class ColorRenderer : BoardRenderer<Color> {
 }
 
 public class ColorGameController : BoardController<Color> {
-    public override MergeStrategy<Color> GetMergeStrategy () {
+    public override IMergeStrategy<Color> GetMergeStrategy () {
         return new ColorMergeStrategy ();
     }
 

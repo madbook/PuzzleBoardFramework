@@ -45,7 +45,7 @@ public class SokobanController : BoardController<int> {
         recordingHistory = true;
     }
 
-    public override MergeStrategy<int> GetMergeStrategy () {
+    public override IMergeStrategy<int> GetMergeStrategy () {
         return new SokobanStrategy ();
     }
 

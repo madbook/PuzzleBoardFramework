@@ -7,12 +7,12 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Create a new PuzzleBoard using a default MergeStrategy.</summary>
         public PuzzleBoard (int width, int height) : base (width, height) {
-            MergeStrategy<T> mergeStrategy = MergeStrategy.GetDefaultStrategy<T> ();
+            IMergeStrategy<T> mergeStrategy = MergeStrategy.GetDefaultStrategy<T> ();
             pushBoard = new BoardPusher<T> (width, height, this, mergeStrategy);
         }
 
         /// <summary>Create a new PuzzleBoard with a custom MergeStrategy.</summary>
-        public PuzzleBoard (int width, int height, MergeStrategy<T> mergeStrategy) : base (width, height) {
+        public PuzzleBoard (int width, int height, IMergeStrategy<T> mergeStrategy) : base (width, height) {
             pushBoard = new BoardPusher<T> (width, height, this, mergeStrategy);
         }
 

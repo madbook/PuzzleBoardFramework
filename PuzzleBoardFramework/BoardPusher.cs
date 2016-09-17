@@ -4,9 +4,9 @@ namespace PuzzleBoardFramework {
 
     public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard {
         PuzzleBoard<T> board;
-        MergeStrategy<T> mergeStrategy;
+        IMergeStrategy<T> mergeStrategy;
 
-        public BoardPusher (int width, int height, PuzzleBoard<T> board, MergeStrategy<T> mergeStrategy) : base (width, height) {
+        public BoardPusher (int width, int height, PuzzleBoard<T> board, IMergeStrategy<T> mergeStrategy) : base (width, height) {
             this.board = board;
             this.mergeStrategy = mergeStrategy;
         }
