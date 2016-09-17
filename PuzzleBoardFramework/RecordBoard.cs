@@ -1,7 +1,7 @@
 using System;
 
 namespace PuzzleBoardFramework {
-    public class RecordBoard<T> : BaseBoard<T> {
+    public class RecordBoard<T> : BaseBoard<T>, IUpdatableBoard<T> {
         Publisher<Record<T>> publisher = new Publisher<Record<T>> ();
 
         public RecordBoard (int width, int height) : base (width, height) {
@@ -22,25 +22,49 @@ namespace PuzzleBoardFramework {
 
             if (newIsEmpty && oldIsEmpty) {
                 return;
-            }
-
-            RecordType type;
-            
-            if (oldIsEmpty) {
-                type = RecordType.Insert;
+            } else if (oldIsEmpty) {
+                InsertTile (position, value);
             } else if (newIsEmpty) {
-                type = RecordType.Delete;
+                DeleteTile (position);
             } else {
-                type = RecordType.Update;
+                // TODO - either make the base behavior defer to the other methods, or
+                // require callers to call the correct method
+                base.UpdateTile (position, value);
+                AddRecord (new Record<T> (
+                    RecordType.Update,
+                    new BoardState<T> (position.X, position.Y, oldValue),
+                    new BoardState<T> (position.X, position.Y, value)
+                ));
             }
             
-            AddRecord (new Record<T> (
-                type,
-                new BoardState<T> (position.X, position.Y, oldValue),
-                new BoardState<T> (position.X, position.Y, value)
-            ));
 
             SetTile (position, value);
+        }
+
+        public override void DeleteTile (IBoardIndex position) {
+            T oldValue = GetTile (position);
+
+            if (!AreEqual (oldValue, default (T))) {
+                base.DeleteTile (position);
+                AddRecord (new Record<T> (
+                    RecordType.Delete,
+                    new BoardState<T> (position.X, position.Y, oldValue),
+                    new BoardState<T> (position.X, position.Y, default (T))
+                ));
+            }
+        }
+
+        public override void InsertTile (IBoardIndex position, T value) {
+            T oldValue = GetTile (position);
+
+            if (AreEqual (oldValue, default (T))) {
+                base.InsertTile (position, value);
+                AddRecord (new Record<T> (
+                    RecordType.Insert,
+                    new BoardState<T> (position.X, position.Y, oldValue),
+                    new BoardState<T> (position.X, position.Y, value)
+                ));
+            }
         }
 
         public override void MoveTile (IBoardIndex fromPosition, IBoardIndex toPosition) {
