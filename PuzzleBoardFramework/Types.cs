@@ -33,6 +33,10 @@ namespace PuzzleBoardFramework {
         public static BoardPosition operator + (BoardPosition position, MoveVector move) {
             return new BoardPosition (position.X + move.x, position.Y + move.y);
         }
+
+        public override string ToString () {
+            return "<BoardPosition " + x + "," + y + ">";
+        }
     }
 
     public struct BoardState<T> : IBoardIndex {
@@ -56,6 +60,10 @@ namespace PuzzleBoardFramework {
             this.x = x;
             this.y = y;
             this.value = value;
+        }
+
+        public override string ToString () {
+            return "<BoardState " + x + "," + y + ":" + value.ToString() + ">";
         }
     }
 
@@ -135,6 +143,10 @@ namespace PuzzleBoardFramework {
             BoardPosition newIndex = new BoardPosition (newState);
 
             return oldIndex.Equals (newIndex);
+        }
+
+        public override string ToString () {
+            return "<Record:" + type.ToString() + " " + oldState + " => " + newState + ">"; 
         }
     }
 
