@@ -2,23 +2,19 @@ using UnityEngine;
 
 namespace PuzzleBoardFramework {
 
-    public abstract class BoardRenderer<T> : IUpdatableBoard<T> {
-        protected int width;
-        protected int height;
+    public abstract class BoardRenderer<T> : BaseBoard<GameObject>, IUpdatableBoard<T>, IBoardRenderer<T> {
+        IUpdatableBoard<T> board;
         Transform parent;
-        BaseBoard<GameObject> renderObjects;
 
-        public BoardRenderer (BaseBoard<T> board, Transform parent) {
-            this.width = board.width;
-            this.height = board.height;
+        public BoardRenderer (BaseBoard<T> board, Transform parent) : base (board.width, board.height) {
+            this.board = board;
             this.parent = parent;
-            renderObjects = new BaseBoard<GameObject> (width, height);
         }
 
         public abstract GameObject CreateRenderObject ();
         
         public GameObject GetRenderObject (IBoardIndex position) {
-            return renderObjects.GetTile (position);
+            return GetTile (position);
         }
         
         public void UpdateTile (IBoardIndex position, T value) {
@@ -28,27 +24,27 @@ namespace PuzzleBoardFramework {
             }
         }
 
-        public void MoveTile (IBoardIndex oldPosition, IBoardIndex newPosition) {
+        public override void MoveTile (IBoardIndex oldPosition, IBoardIndex newPosition) {
             GameObject obj = GetRenderObject (oldPosition);
             if (obj != null) {
                 UpdateRenderPosition (obj, newPosition);
-                renderObjects.MoveTile (oldPosition, newPosition);
+                base.MoveTile (oldPosition, newPosition);
             }
         }
 
         public void InsertTile (IBoardIndex position, T value) {
             GameObject obj = CreateRenderObject ();
-            renderObjects.UpdateTile (position, obj);
+            base.InsertTile (position, obj);
             UpdateRenderPosition (obj, position);
-            UpdateTile (position, value);
+            UpdateRenderValue (obj, value);
             obj.transform.parent = parent;
         }
 
-        public void DeleteTile (IBoardIndex position) {
-            GameObject obj = renderObjects.GetTile (position);
+        public override void DeleteTile (IBoardIndex position) {
+            GameObject obj = GetTile (position);
             if (obj != null) {
                 GameObject.Destroy (obj);
-                renderObjects.UpdateTile (position, null);
+                base.DeleteTile (position);
             }
         }
 
@@ -64,7 +60,7 @@ namespace PuzzleBoardFramework {
             InsertTile (fromPosition, fromValue);
         }
 
-        public void Clear () {
+        public override void Clear () {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     DeleteTile (new BoardPosition (x, y));
@@ -72,8 +68,16 @@ namespace PuzzleBoardFramework {
             }
         }
 
+        T IUpdatableBoard<T>.GetTile (IBoardIndex position) {
+            return board.GetTile (position);
+        }
+
+        bool IUpdatableBoard<T>.IsPositionValue (IBoardIndex position, T value) {
+            return board.IsPositionValue (position, value);
+        } 
+
         public void RotateTile (IBoardIndex position, T value, MoveVector move) {
-            GameObject obj = renderObjects.GetTile (position);
+            GameObject obj = GetTile (position);
             if (obj != null) {
                 UpdateRenderRotation (obj, value, move);
             }
