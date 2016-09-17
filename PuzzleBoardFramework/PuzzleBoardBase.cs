@@ -2,7 +2,17 @@ using System.Collections.Generic;
 
 namespace PuzzleBoardFramework {
 
-    public class BaseBoard<T> {
+    public interface IUpdatableBoard<T> {
+        void UpdateTile (IBoardIndex position, T value);
+        void DeleteTile (IBoardIndex position);
+        void InsertTile (IBoardIndex position, T value);
+        void MoveTile (IBoardIndex fromPosition, IBoardIndex toPosition);
+        void MergeTile (IBoardIndex fromPosition, IBoardIndex toPosition, T value);
+        void SplitTile (IBoardIndex fromPosition, IBoardIndex toPosition, T fromValue, T toValue);
+        void Clear ();
+    }
+
+    public class BaseBoard<T> : IUpdatableBoard<T> {
         public readonly int width;
         public readonly int height;
 
@@ -15,16 +25,19 @@ namespace PuzzleBoardFramework {
             values = new T[width,height];
         }
 
-        /// <summary>Insert, update, or delete each value in a list of Index2D positions.</summary> 
-        public void UpdateTiles (List<IBoardIndex> positions, T value) {
-            foreach (IBoardIndex position in positions) {
-                UpdateTile (position, value);
-            }
-        }
-
         /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
         public virtual void UpdateTile (IBoardIndex position, T value) {
             SetTile (position, value);
+        }
+
+        public virtual void DeleteTile (IBoardIndex position) {
+            SetTile (position, default (T));
+        }
+
+        public virtual void InsertTile (IBoardIndex position, T value) {
+            if (AreEqual (GetTile (position), default (T))) {
+                SetTile (position, value);
+            }
         }
 
         public virtual void MoveTile (IBoardIndex fromPosition, IBoardIndex toPosition) {
@@ -40,6 +53,27 @@ namespace PuzzleBoardFramework {
         public virtual void MergeTile (IBoardIndex fromPosition, IBoardIndex toPosition, T value) {
             SetTile (toPosition, value);
             SetTile (fromPosition, default (T));
+        }
+
+        public virtual void SplitTile (IBoardIndex fromPosition, IBoardIndex toPosition, T fromValue, T toValue) {
+            SetTile (toPosition, toValue);
+            SetTile (fromPosition, fromValue);
+        }
+
+        /// <summary>Resets all MoveVectors.  Sets all values to default, using the current mergeStrategy.</summary>
+        public virtual void Clear () {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    values[x,y] = default (T);
+                }
+            }
+        }
+
+        /// <summary>Insert, update, or delete each value in a list of Index2D positions.</summary> 
+        public void UpdateTiles (List<IBoardIndex> positions, T value) {
+            foreach (IBoardIndex position in positions) {
+                UpdateTile (position, value);
+            }
         }
 
         T GetTile (int x, int y) {
@@ -188,15 +222,6 @@ namespace PuzzleBoardFramework {
             }
 
             return positions;
-        }
-
-        /// <summary>Resets all MoveVectors.  Sets all values to default, using the current mergeStrategy.</summary>
-        public virtual void Clear () {
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    values[x,y] = default (T);
-                }
-            }
         }
 
         public bool IsPositionValue (IBoardIndex position, T value) {

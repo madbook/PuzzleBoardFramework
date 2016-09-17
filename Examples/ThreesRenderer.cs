@@ -13,7 +13,7 @@ public class ThreesRenderer : PuzzleBoardRenderer<int> {
         return new ThreesMergeStrategy ();
     }
 
-    public override void UpdateRenderValue (IBoardIndex position, int value) {
+    public override void UpdateTile (IBoardIndex position, int value) {
         GameObject obj = GetRenderObject (position);
         obj.GetComponentInChildren<TextMesh> ().text = value.ToString ();
     }

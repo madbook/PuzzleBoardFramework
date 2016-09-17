@@ -30,7 +30,7 @@ public class SokobanRenderer : PuzzleBoardRenderer<int> {
     public void Reset () {
         recordingHistory = false;
         board.Clear ();
-        ClearRenderObjects ();
+        Clear ();
         history.ClearAll ();
         Init ();
         recordingHistory = true;
@@ -65,7 +65,7 @@ public class SokobanRenderer : PuzzleBoardRenderer<int> {
         return new SokobanStrategy ();
     }
 
-    public override void UpdateRenderValue (IBoardIndex position, int value) {
+    public override void UpdateTile (IBoardIndex position, int value) {
         GameObject obj = GetRenderObject (position);
         if (value == PLAYER_TYPE) {
             obj.transform.localScale = new Vector3 (.5f, .5f, 1);

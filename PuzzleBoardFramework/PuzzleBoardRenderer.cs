@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace PuzzleBoardFramework {
 
-    public abstract class PuzzleBoardRenderer<T> : MonoBehaviour {
+    public abstract class PuzzleBoardRenderer<T> : MonoBehaviour, IUpdatableBoard<T> {
         public int width = 4;
         public int height = 4;
         public PuzzleBoard<T> board;
@@ -10,7 +10,7 @@ namespace PuzzleBoardFramework {
         BaseBoard<GameObject> renderObjects;
         MergeStrategy<T> mergeStrategy;
 
-        public abstract void UpdateRenderValue (IBoardIndex position, T value);
+        public abstract void UpdateTile (IBoardIndex position, T value);
         public abstract GameObject CreateRenderObject ();
         public abstract MergeStrategy<T> GetMergeStrategy ();
 
@@ -25,39 +25,30 @@ namespace PuzzleBoardFramework {
         }
 
         public virtual void OnRecordReceived (Record<T> record) {
-            if (record.type == RecordType.Merge) {
+            if (record.type == RecordType.Merge || record.type == RecordType.Split) {
                 if (!hasReceivedSecondRecord) {
                     secondRecord = record;
                     hasReceivedSecondRecord = true;
                 } else {
+                    // Assumes that Merge and Split records always come in pairs
                     hasReceivedSecondRecord = false;
                     Record<T> staticRecord = (record.IsStatic ()) ? record : secondRecord;
                     Record<T> movingRecord = (record.IsStatic ()) ? secondRecord : record;
-                    DestroyRenderObject (staticRecord.newState);
-                    MoveRenderObject (movingRecord.oldState, movingRecord.newState);
-                    UpdateRenderValue (movingRecord.newState, movingRecord.newState.Value);
-                }
-            } else if (record.type == RecordType.Split) {
-                if (!hasReceivedSecondRecord) {
-                    secondRecord = record;
-                    hasReceivedSecondRecord = true;
-                } else {
-                    hasReceivedSecondRecord = false;
-                    Record<T> staticRecord = (record.IsStatic ()) ? record : secondRecord;
-                    Record<T> movingRecord = (record.IsStatic ()) ? secondRecord : record;
-                    MoveRenderObject (movingRecord.oldState, movingRecord.newState);
-                    UpdateRenderValue (movingRecord.newState, movingRecord.newState.Value);
-                    InsertNewRenderObject (staticRecord.newState, staticRecord.newState.Value);
+                    if (record.type == RecordType.Merge) {
+                        MergeTile (movingRecord.oldState, movingRecord.newState, movingRecord.newState.Value);
+                    } else {
+                        SplitTile (movingRecord.oldState, movingRecord.newState, staticRecord.newState.Value, movingRecord.newState.Value);
+                    }
                 }
             } else if (record.type == RecordType.Move) {
                 // This is a tile that moved into an empty spot.  Find and update it's render cube.
-                MoveRenderObject (record.oldState, record.newState);
+                MoveTile (record.oldState, record.newState);
             } else if (record.type == RecordType.Insert) {
-                InsertNewRenderObject (record.newState, record.newState.Value);
+                InsertTile (record.newState, record.newState.Value);
             } else if (record.type == RecordType.Delete) {
-                DestroyRenderObject (record.newState);
+                DeleteTile (record.newState);
             } else if (record.type == RecordType.Update) {
-                UpdateRenderValue (record.newState, record.newState.Value);
+                UpdateTile (record.newState, record.newState.Value);
             }
         }
 
@@ -65,11 +56,47 @@ namespace PuzzleBoardFramework {
             return renderObjects.GetTile (position);
         }
 
-        public void MoveRenderObject (IBoardIndex oldPosition, IBoardIndex newPosition) {
+        public void MoveTile (IBoardIndex oldPosition, IBoardIndex newPosition) {
             GameObject obj = GetRenderObject (oldPosition);
             if (obj != null) {
                 UpdateRenderPosition (obj, newPosition);
                 renderObjects.MoveTile (oldPosition, newPosition);
+            }
+        }
+
+        public void InsertTile (IBoardIndex position, T value) {
+            GameObject obj = CreateRenderObject ();
+            renderObjects.UpdateTile (position, obj);
+            UpdateRenderPosition (obj, position);
+            UpdateTile (position, value);
+            obj.transform.parent = transform;
+        }
+
+        public void DeleteTile (IBoardIndex position) {
+            GameObject obj = renderObjects.GetTile (position);
+            if (obj != null) {
+                Destroy (obj);
+                renderObjects.UpdateTile (position, null);
+            }
+        }
+
+        public void MergeTile (IBoardIndex fromPosition, IBoardIndex toPosition, T value) {
+            DeleteTile (toPosition);
+            MoveTile (fromPosition, toPosition);
+            UpdateTile (toPosition, value);
+        }
+
+        public void SplitTile (IBoardIndex fromPosition, IBoardIndex toPosition, T fromValue, T toValue) {
+            MoveTile (fromPosition, toPosition);
+            UpdateTile (toPosition, toValue);
+            InsertTile (fromPosition, fromValue);
+        }
+
+        public void Clear () {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    DeleteTile (new BoardPosition (x, y));
+                }
             }
         }
 
@@ -78,30 +105,6 @@ namespace PuzzleBoardFramework {
                 return;
             }
             obj.transform.localPosition = new Vector3 (position.X - width/2f + .5f, position.Y - height/2f + .5f, z);
-        }
-
-        public void InsertNewRenderObject (IBoardIndex position, T value) {
-            GameObject obj = CreateRenderObject ();
-            renderObjects.UpdateTile (position, obj);
-            UpdateRenderPosition (obj, position);
-            UpdateRenderValue (position, value);
-            obj.transform.parent = transform;
-        }
-
-        public void DestroyRenderObject (IBoardIndex position) {
-            GameObject obj = renderObjects.GetTile (position);
-            if (obj != null) {
-                Destroy (obj);
-                renderObjects.UpdateTile (position, null);
-            }
-        }
-
-        public void ClearRenderObjects () {
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    DestroyRenderObject (new BoardPosition (x, y));
-                }
-            }
         }
     }
 

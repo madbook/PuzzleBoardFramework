@@ -17,7 +17,7 @@ public class ColorGameRenderer : PuzzleBoardRenderer<Color> {
         return new ColorMergeStrategy ();
     }
 
-    public override void UpdateRenderValue (IBoardIndex position, Color value) {
+    public override void UpdateTile (IBoardIndex position, Color value) {
         GameObject obj = GetRenderObject (position);
         obj.GetComponent<MeshRenderer> ().material.color = value;
     }
