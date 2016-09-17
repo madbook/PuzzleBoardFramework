@@ -28,7 +28,7 @@ namespace PuzzleBoardFramework {
         }
 
         public virtual void MoveTile (IBoardIndex fromPosition, IBoardIndex toPosition) {
-            if (!GetTile (toPosition).Equals (default (T))) {
+            if (!AreEqual (GetTile (toPosition), default (T))) {
                 return;
             }
 
@@ -42,6 +42,10 @@ namespace PuzzleBoardFramework {
             SetTile (fromPosition, default (T));
         }
 
+        T GetTile (int x, int y) {
+            return values[x, y];
+        }
+
         /// <summary>Returns the value at the given Index2D position.</summary>
         public T GetTile (IBoardIndex position) {
             return values[position.X, position.Y];
@@ -53,7 +57,7 @@ namespace PuzzleBoardFramework {
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    if (values[x,y].Equals (matchValue)) {
+                    if (AreEqual (GetTile (x, y), matchValue)) {
                         matches.Add (new BoardPosition (x, y));
                     }
                 }
@@ -68,7 +72,7 @@ namespace PuzzleBoardFramework {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     foreach (T matchValue in valuesToMatch) {
-                        if (values[x,y].Equals (matchValue)) {
+                        if (AreEqual (GetTile (x, y), matchValue)) {
                             matches.Add (new BoardPosition (x, y));
                             goto Next;
                         }
@@ -106,7 +110,7 @@ namespace PuzzleBoardFramework {
             List<IBoardIndex> matches = new List<IBoardIndex> ();
 
             for (int x = 0; x < width; x++) {
-                if (values[x,row].Equals (matchValue)) {
+                if (AreEqual (GetTile (x, row), matchValue)) {
                     matches.Add (new BoardPosition (x, row));
                 }
             }
@@ -119,7 +123,7 @@ namespace PuzzleBoardFramework {
             List<IBoardIndex> matches = new List<IBoardIndex> ();
 
             for (int y = 0; y < height; y++) {
-                if (values[col, y].Equals (matchValue)) {
+                if (AreEqual (GetTile (col, y), matchValue)) {
                     matches.Add (new BoardPosition (col, y));
                 }
             }
@@ -146,7 +150,7 @@ namespace PuzzleBoardFramework {
                 if (IsValidIndex2D (checkingUp) &&
                         checkedPositions[checkingUp.X, checkingUp.Y] == 0) {
                     checkedPositions[checkingUp.X, checkingUp.Y] = 1;
-                    if (values[checkingUp.X, checkingUp.Y].Equals(value)) {
+                    if (AreEqual (GetTile (checkingUp), value)) {
                         positions.Add (checkingUp);
                         positionsToCheck.Enqueue (checkingUp);
                     }
@@ -156,7 +160,7 @@ namespace PuzzleBoardFramework {
                 if (IsValidIndex2D (checkingDown) &&
                         checkedPositions[checkingDown.X, checkingDown.Y] == 0) {
                     checkedPositions[checkingDown.X, checkingDown.Y] = 1;
-                    if (values[checkingDown.X, checkingDown.Y].Equals(value)) {
+                    if (AreEqual (GetTile (checkingDown), value)) {
                         positions.Add (checkingDown);
                         positionsToCheck.Enqueue (checkingDown);
                     }
@@ -166,7 +170,7 @@ namespace PuzzleBoardFramework {
                 if (IsValidIndex2D (checkingLeft) &&
                         checkedPositions[checkingLeft.X, checkingLeft.Y] == 0) {
                     checkedPositions[checkingLeft.X, checkingLeft.Y] = 1;
-                    if (values[checkingLeft.X, checkingLeft.Y].Equals(value)) {
+                    if (AreEqual (GetTile (checkingLeft), value)) {
                         positions.Add (checkingLeft);
                         positionsToCheck.Enqueue (checkingLeft);
                     }
@@ -176,7 +180,7 @@ namespace PuzzleBoardFramework {
                 if (IsValidIndex2D (checkingRight) &&
                         checkedPositions[checkingRight.X, checkingRight.Y] == 0) {
                     checkedPositions[checkingRight.X, checkingRight.Y] = 1;
-                    if (values[checkingRight.X, checkingRight.Y].Equals(value)) {
+                    if (AreEqual (GetTile (checkingRight), value)) {
                         positions.Add (checkingRight);
                         positionsToCheck.Enqueue (checkingRight);
                     }
@@ -196,7 +200,7 @@ namespace PuzzleBoardFramework {
         }
 
         public bool IsPositionValue (IBoardIndex position, T value) {
-            return GetTile (position).Equals (value);
+            return AreEqual (GetTile (position), value);
         }
 
         /// <summary>Sets the value at the given Index2D position.</summary>
@@ -214,6 +218,10 @@ namespace PuzzleBoardFramework {
             } else {
                 return true;
             }
+        }
+
+        protected bool AreEqual (T valueA, T valueB) {
+            return EqualityComparer<T>.Default.Equals (valueA, valueB);
         }
     }
 
