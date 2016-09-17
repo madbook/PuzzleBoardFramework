@@ -25,6 +25,11 @@ namespace PuzzleBoardFramework {
             this.y = y;
         }
 
+        public BoardPosition (IBoardIndex position) {
+            this.x = position.X;
+            this.y = position.Y;
+        }
+
         public static BoardPosition operator + (BoardPosition position, MoveVector move) {
             return new BoardPosition (position.X + move.x, position.Y + move.y);
         }
@@ -116,19 +121,21 @@ namespace PuzzleBoardFramework {
     /// <summary>Represents a change of state on the board.</summary>
     public struct Record<T> {
         public readonly RecordType type;
-        public readonly BoardPosition oldPosition;
-        public readonly BoardPosition newPosition;
-        public readonly T oldValue;
-        public readonly T newValue;
+        public readonly BoardState<T> oldState;
+        public readonly BoardState<T> newState;
 
-        public Record (RecordType type, BoardPosition oldPosition, BoardPosition newPosition, T oldValue, T newValue) {
+        public Record (RecordType type, BoardState<T> oldState, BoardState<T> newState) {
             this.type = type;   
-            this.oldPosition = oldPosition;
-            this.newPosition = newPosition;
-            this.oldValue = oldValue;
-            this.newValue = newValue;
+            this.oldState = oldState;
+            this.newState = newState;
         }
 
+        public bool IsStatic () {
+            BoardPosition oldIndex = new BoardPosition (oldState);
+            BoardPosition newIndex = new BoardPosition (newState);
+
+            return oldIndex.Equals (newIndex);
+        }
     }
 
 }

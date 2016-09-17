@@ -36,10 +36,8 @@ namespace PuzzleBoardFramework {
             
             AddRecord (new Record<T> (
                 type,
-                new BoardPosition (position.X, position.Y),
-                new BoardPosition (position.X, position.Y),
-                oldValue,
-                value
+                new BoardState<T> (position.X, position.Y, oldValue),
+                new BoardState<T> (position.X, position.Y, value)
             ));
 
             SetTile (position, value);
@@ -55,10 +53,8 @@ namespace PuzzleBoardFramework {
             SetTile (fromPosition, default (T));
             AddRecord (new Record<T> (
                 RecordType.Move,
-                new BoardPosition (fromPosition.X, fromPosition.Y),
-                new BoardPosition (toPosition.X, toPosition.Y),
-                value,
-                value
+                new BoardState<T> (fromPosition.X, fromPosition.Y, value),
+                new BoardState<T> (toPosition.X, toPosition.Y, value)
             ));
         }
 
@@ -70,36 +66,30 @@ namespace PuzzleBoardFramework {
 
             AddRecord (new Record<T> (
                 RecordType.Merge,
-                new BoardPosition (fromPosition.X, fromPosition.Y),
-                new BoardPosition (toPosition.X, toPosition.Y),
-                valueFrom,
-                value
+                new BoardState<T> (fromPosition.X, fromPosition.Y, valueFrom),
+                new BoardState<T> (toPosition.X, toPosition.Y, value)
             ));
 
             AddRecord (new Record<T> (
                 RecordType.Merge,
-                new BoardPosition (toPosition.X, toPosition.Y),
-                new BoardPosition (toPosition.X, toPosition.Y),
-                valueInto,
-                value
+                new BoardState<T> (toPosition.X, toPosition.Y, valueInto),
+                new BoardState<T> (toPosition.X, toPosition.Y, value)
             ));
         }
 
         public void UndoRecord (Record<T> record) {
             if (record.type == RecordType.Move) {
-                if (!IsPositionValue (record.oldPosition, default (T))) {
+                if (!IsPositionValue (record.oldState, default (T))) {
                     return;
                 }
-                SetTile (record.newPosition, default (T));
+                SetTile (record.newState, default (T));
             }
 
-            SetTile (record.oldPosition, record.oldValue);
+            SetTile (record.oldState, record.oldState.Value);
             AddRecord (new Record<T> (
                 Record.GetOppositeRecordType (record.type),
-                new BoardPosition (record.newPosition.X, record.newPosition.Y),
-                new BoardPosition (record.oldPosition.X, record.oldPosition.Y),
-                record.newValue,
-                record.oldValue
+                record.newState,
+                record.oldState
             ));
         }
 
