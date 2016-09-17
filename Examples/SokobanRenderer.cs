@@ -65,8 +65,8 @@ public class SokobanRenderer : PuzzleBoardRenderer<int> {
         return new SokobanStrategy ();
     }
 
-    public override void UpdateRenderValue (int x, int y, int value) {
-        GameObject obj = GetRenderObject (x, y);
+    public override void UpdateRenderValue (IBoardIndex position, int value) {
+        GameObject obj = GetRenderObject (position);
         if (value == PLAYER_TYPE) {
             obj.transform.localScale = new Vector3 (.5f, .5f, 1);
             obj.GetComponent<MeshRenderer> ().material.color = Color.red;
