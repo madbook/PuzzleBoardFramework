@@ -13,6 +13,12 @@ namespace PuzzleBoardFramework {
 
     /// <summary>Represents a tile container that can be addressed and updated by IBoardIndex values.</summary>
     public interface IUpdatableBoard<T> {
+        /// <summary>Get the value at the given position.</summary>
+        T GetTile (IBoardIndex position);
+
+        /// <summary>Checks the value at the current position to the given value for equality.</summary>
+        bool IsPositionValue (IBoardIndex position, T value);
+
         /// <summary>Update the tile at the given position with the given value.</summary>
         /// <remarks>
         ///     Implementations should defer to DeleteTile if default (T) is passed in.

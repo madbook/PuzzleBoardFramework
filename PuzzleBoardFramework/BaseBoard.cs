@@ -67,11 +67,11 @@ namespace PuzzleBoardFramework {
         }
 
         /// <summary>Returns the value at the given Index2D position.</summary>
-        public T GetTile (IBoardIndex position) {
+        public virtual T GetTile (IBoardIndex position) {
             return values[position.X, position.Y];
         }
 
-        public bool IsPositionValue (IBoardIndex position, T value) {
+        public virtual bool IsPositionValue (IBoardIndex position, T value) {
             return AreEqual (GetTile (position), value);
         }
 
