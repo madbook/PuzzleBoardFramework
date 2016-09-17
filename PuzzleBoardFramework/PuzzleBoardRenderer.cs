@@ -31,11 +31,11 @@ namespace PuzzleBoardFramework {
                     hasReceivedSecondRecord = true;
                 } else {
                     hasReceivedSecondRecord = false;
-                    Record<T> staticRecord = (record.newPosition.Equals (record.oldPosition)) ? record : secondRecord;
+                    Record<T> staticRecord = (record.IsStatic ()) ? record : secondRecord;
                     Record<T> movingRecord = (staticRecord.Equals (record)) ? secondRecord : record;
-                    DestroyRenderObject (staticRecord.newPosition.X, staticRecord.newPosition.Y);
-                    MoveRenderObject (movingRecord.oldPosition.X, movingRecord.oldPosition.Y, movingRecord.newPosition.X, movingRecord.newPosition.Y);
-                    UpdateRenderValue (movingRecord.newPosition.X, movingRecord.newPosition.Y, movingRecord.newValue);
+                    DestroyRenderObject (staticRecord.newState.X, staticRecord.newState.Y);
+                    MoveRenderObject (movingRecord.oldState.X, movingRecord.oldState.Y, movingRecord.newState.X, movingRecord.newState.Y);
+                    UpdateRenderValue (movingRecord.newState.X, movingRecord.newState.Y, movingRecord.newState.Value);
                 }
             } else if (record.type == RecordType.Split) {
                 if (!hasReceivedSecondRecord) {
@@ -43,46 +43,54 @@ namespace PuzzleBoardFramework {
                     hasReceivedSecondRecord = true;
                 } else {
                     hasReceivedSecondRecord = false;
-                    Record<T> staticRecord = (record.newPosition.Equals (record.oldPosition)) ? record : secondRecord;
+                    Record<T> staticRecord = (record.newState.Equals (record.oldState)) ? record : secondRecord;
                     Record<T> movingRecord = (staticRecord.Equals (record)) ? secondRecord : record;
 
-                    MoveRenderObject (movingRecord.oldPosition.X, movingRecord.oldPosition.Y, movingRecord.newPosition.X, movingRecord.newPosition.Y);
-                    UpdateRenderValue (movingRecord.newPosition.X, movingRecord.newPosition.Y, movingRecord.newValue);
-                    InsertNewRenderObject (staticRecord.newPosition.X, staticRecord.newPosition.Y, staticRecord.newValue);
+                    MoveRenderObject (movingRecord.oldState.X, movingRecord.oldState.Y, movingRecord.newState.X, movingRecord.newState.Y);
+                    UpdateRenderValue (movingRecord.newState.X, movingRecord.newState.Y, movingRecord.newState.Value);
+                    InsertNewRenderObject (staticRecord.newState.X, staticRecord.newState.Y, staticRecord.newState.Value);
                 }
             } else if (record.type == RecordType.Move) {
                 // This is a tile that moved into an empty spot.  Find and update it's render cube.
-                MoveRenderObject (record.oldPosition.X, record.oldPosition.Y, record.newPosition.X, record.newPosition.Y);
+                MoveRenderObject (record.oldState.X, record.oldState.Y, record.newState.X, record.newState.Y);
             } else if (record.type == RecordType.Insert) {
-                InsertNewRenderObject (record.newPosition.X, record.newPosition.Y, record.newValue);
+                InsertNewRenderObject (record.newState.X, record.newState.Y, record.newState.Value);
             } else if (record.type == RecordType.Delete) {
-                DestroyRenderObject (record.newPosition.X, record.newPosition.Y);
+                DestroyRenderObject (record.newState.X, record.newState.Y);
             } else if (record.type == RecordType.Update) {
-                UpdateRenderValue (record.newPosition.X, record.newPosition.Y, record.newValue);
+                UpdateRenderValue (record.newState.X, record.newState.Y, record.newState.Value);
             }
         }
 
         public GameObject GetRenderObject (int x, int y) {
             return renderObjects.GetTile (x, y);
-        } 
+        }
+
+        public GameObject GetRenderObject (IBoardIndex position) {
+            return renderObjects.GetTile (position);
+        }
 
         public void MoveRenderObject (int oldX, int oldY, int newX, int newY) {
-            GameObject obj = GetRenderObject (oldX, oldY);
+            MoveRenderObject (new BoardPosition (oldX, oldY), new BoardPosition (newX, newY));
+        }
+
+        public void MoveRenderObject (IBoardIndex oldPosisition, IBoardIndex newPosition) {
+            GameObject obj = GetRenderObject (oldPosisition);
             if (obj != null) {
-                UpdateRenderPosition (obj, newX, newY);
-                renderObjects.UpdateTile (newX, newY, obj);
-                renderObjects.UpdateTile (oldX, oldY, null);
+                UpdateRenderPosition (obj, newPosition);
+                renderObjects.UpdateTile (newPosition, obj);
+                renderObjects.UpdateTile (oldPosisition, null);
             }
         }
 
-        public virtual void UpdateRenderPosition (GameObject obj, int x, int y, int z = 0) {
-            obj.transform.localPosition = new Vector3 (x - width/2f + .5f, y - height/2f + .5f, z);
+        public virtual void UpdateRenderPosition (GameObject obj, IBoardIndex position, int z = 0) {
+            obj.transform.localPosition = new Vector3 (position.X - width/2f + .5f, position.Y - height/2f + .5f, z);
         }
 
         public void InsertNewRenderObject (int x, int y, T value) {
             GameObject obj = CreateRenderObject ();
             renderObjects.UpdateTile (x, y, obj);
-            UpdateRenderPosition (obj, x, y);
+            UpdateRenderPosition (obj, new BoardPosition (x, y));
             UpdateRenderValue (x, y, value);
             obj.transform.parent = transform;
         }

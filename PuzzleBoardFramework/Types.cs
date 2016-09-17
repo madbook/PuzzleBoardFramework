@@ -116,19 +116,20 @@ namespace PuzzleBoardFramework {
     /// <summary>Represents a change of state on the board.</summary>
     public struct Record<T> {
         public readonly RecordType type;
-        public readonly BoardPosition oldPosition;
-        public readonly BoardPosition newPosition;
-        public readonly T oldValue;
-        public readonly T newValue;
+        public readonly BoardState<T> oldState;
+        public readonly BoardState<T> newState;
 
-        public Record (RecordType type, BoardPosition oldPosition, BoardPosition newPosition, T oldValue, T newValue) {
+        public Record (RecordType type, BoardState<T> oldState, BoardState<T> newState) {
             this.type = type;   
-            this.oldPosition = oldPosition;
-            this.newPosition = newPosition;
-            this.oldValue = oldValue;
-            this.newValue = newValue;
+            this.oldState = oldState;
+            this.newState = newState;
         }
 
+        public bool IsStatic () {
+            IBoardIndex oldIndex = oldState;
+            IBoardIndex newIndex = newState;
+            return oldIndex.Equals (newIndex);
+        }
     }
 
 }
