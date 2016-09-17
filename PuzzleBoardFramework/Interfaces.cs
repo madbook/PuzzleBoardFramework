@@ -64,6 +64,30 @@ namespace PuzzleBoardFramework {
         void PushTiles (List<IBoardIndex> positions, MoveVector push);
     }
 
+    /// <summary>Provides methods to get lists of positions on a tile container.</summary>
+    public interface ISearchableBoard<T> {
+        /// <summary>Get a list of positions that match the given value.</summary>
+        List<IBoardIndex> GetPositionsMatching (T matchValue);
+
+        /// <summary>Get a list of positions that match any of the given values.</summary>
+        List<IBoardIndex> GetPositionsMatching (params T[] valuesToMatch);
+
+        /// <summary>Get a list of all positions in the given row.</summary>
+        List<IBoardIndex> GetPositionsInRow (int row);
+
+        /// <summary>Get a list of all positions in the given column.</summary>
+        List<IBoardIndex> GetPositionsInColumn (int col);
+
+        /// <summary>Get a list of all positions in the given row that match the given value.</summary>
+        List<IBoardIndex> GetPositionsInRowMatching (int row, T matchValue);
+
+        /// <summary>Get a list of all positions in the given column that match the given value.</summary>
+        List<IBoardIndex> GetPositionsInColumnMatching (int col, T matchValue);
+
+        /// <summary>Get a list of contiguous orthagonally adjacent tiles connected to the tile at the given position that match its value.</summary>
+        List<IBoardIndex> GetIdenticalAdjacentPositions (T value, IBoardIndex position);
+    }
+
     /// <summary>Represents an object that can render a tile container as GameObjects.</summary> 
     public interface IBoardRenderer<T> {
         /// <summary>Update obj rendering based on position.</summary>
