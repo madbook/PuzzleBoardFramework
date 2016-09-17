@@ -3,10 +3,11 @@ using System.Collections.Generic;
 namespace PuzzleBoardFramework {
 
     public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard {
+
         IUpdatableBoard<T> board;
         IMergeStrategy<T> mergeStrategy;
 
-        public BoardPusher (PuzzleBoard<T> board, IMergeStrategy<T> mergeStrategy) : base (board.width, board.height) {
+        public BoardPusher (PuzzleBoard<T> board, IMergeStrategy<T> mergeStrategy) : base (board.Width, board.Height) {
             this.board = board;
             this.mergeStrategy = mergeStrategy;
         }
@@ -17,8 +18,8 @@ namespace PuzzleBoardFramework {
                 return;
             }
 
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
                     BoardPosition position = new BoardPosition(x, y);
                     UpdateTile (position, push);
                 }
@@ -45,8 +46,8 @@ namespace PuzzleBoardFramework {
                 return;
             }
 
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
                     BoardPosition position = new BoardPosition(x, y);
                     if (board.IsPositionValue (position, matchValue)) {
                         UpdateTile (position, push);
@@ -80,8 +81,8 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Iterates through all cells and attempts to apply movement to those currently moving left.</summary>
         void TryPushLeft () {
-            for (int y = 0; y < height; y++) {
-                for (int x = width - 1; x >= 1; x--) {
+            for (int y = 0; y < Height; y++) {
+                for (int x = Width - 1; x >= 1; x--) {
                     BoardPosition position = new BoardPosition (x, y);
                     MoveVector push = GetTile (position);
                     if (push == MoveVector.left) {
@@ -89,7 +90,7 @@ namespace PuzzleBoardFramework {
                     }
                 }
 
-                for (int x = 1; x < width; x++) {
+                for (int x = 1; x < Width; x++) {
                     BoardPosition position = new BoardPosition (x, y);
                     MoveVector push = GetTile (position);
                     if (push == MoveVector.left) {
@@ -101,8 +102,8 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Iterates through all cells and attempts to apply movement to those currently moving right.</summary>
         void TryPushRight () {
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width - 1; x++) {
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width - 1; x++) {
                     BoardPosition position = new BoardPosition (x, y);
                     MoveVector push = GetTile (position);
                     if (push == MoveVector.right) {
@@ -110,7 +111,7 @@ namespace PuzzleBoardFramework {
                     }
                 }
 
-                for (int x = width - 2; x >= 0; x--) {
+                for (int x = Width - 2; x >= 0; x--) {
                     BoardPosition position = new BoardPosition (x, y);
                     MoveVector push = GetTile (position);
                     if (push == MoveVector.right) {
@@ -122,8 +123,8 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Iterates through all cells and attempts to apply movement to those currently moving down.</summary>
         void TryPushDown () {
-            for (int x = 0; x < width; x++) {
-                for (int y = height - 1; y >= 1; y--) {
+            for (int x = 0; x < Width; x++) {
+                for (int y = Height - 1; y >= 1; y--) {
                     BoardPosition position = new BoardPosition (x, y);
                     MoveVector push = GetTile (position);
                     if (push == MoveVector.down) {
@@ -131,7 +132,7 @@ namespace PuzzleBoardFramework {
                     }
                 }
 
-                for (int y = 1; y < height; y++) {
+                for (int y = 1; y < Height; y++) {
                     BoardPosition position = new BoardPosition (x, y);
                     MoveVector push = GetTile (position);
                     if (push == MoveVector.down) {
@@ -143,8 +144,8 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Iterates through all cells and attempts to apply movement to those currently moving up.</summary>  
         void TryPushUp () {
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height - 1; y++) {
+            for (int x = 0; x < Width; x++) {
+                for (int y = 0; y < Height - 1; y++) {
                     BoardPosition position = new BoardPosition (x, y);
                     MoveVector push = GetTile (position);
                     if (push == MoveVector.up) {
@@ -152,7 +153,7 @@ namespace PuzzleBoardFramework {
                     }
                 }
 
-                for (int y = height - 2; y >= 0; y--) {
+                for (int y = Height - 2; y >= 0; y--) {
                     BoardPosition position = new BoardPosition (x, y);
                     MoveVector push = GetTile (position);
                     if (push == MoveVector.up) {
@@ -200,6 +201,8 @@ namespace PuzzleBoardFramework {
                 }
             }
         }
+
     }
+
 }
 

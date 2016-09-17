@@ -11,14 +11,24 @@ namespace PuzzleBoardFramework {
         int Y { get; }
     }
 
-    /// <summary>Represents a tile container that can be addressed and updated by IBoardIndex values.</summary>
-    public interface IUpdatableBoard<T> {
+    public interface IBoard {
+        int Width { get; }
+
+        int Height { get; }
+
+        bool IsValidIndex2D (IBoardIndex index);
+    }
+
+    public interface IBoard<T> : IBoard {
         /// <summary>Get the value at the given position.</summary>
         T GetTile (IBoardIndex position);
 
         /// <summary>Checks the value at the current position to the given value for equality.</summary>
         bool IsPositionValue (IBoardIndex position, T value);
+    }
 
+    /// <summary>Represents a tile container that can be addressed and updated by IBoardIndex values.</summary>
+    public interface IUpdatableBoard<T> : IBoard<T> {
         /// <summary>Update the tile at the given position with the given value.</summary>
         /// <remarks>
         ///     Implementations should defer to DeleteTile if default (T) is passed in.

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 namespace PuzzleBoardFramework {
 
     public class BaseBoard<T> : IUpdatableBoard<T> {
-        public readonly int width;
-        public readonly int height;
+        readonly int width;
+        readonly int height;
 
         T[,] values;
 
@@ -13,6 +13,14 @@ namespace PuzzleBoardFramework {
             this.width = width;
             this.height = height;
             values = new T[width,height];
+        }
+
+        public int Width {
+            get { return width; }
+        }
+
+        public int Height {
+            get { return height; }
         }
 
         /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
@@ -75,21 +83,21 @@ namespace PuzzleBoardFramework {
             return AreEqual (GetTile (position), value);
         }
 
+        /// <summary>Checks if the given Index2D is within the bounds of the PuzzleBoard</summary>
+        public bool IsValidIndex2D (IBoardIndex index) {
+            if (index.X < 0 || index.X >= width || index.Y < 0 || index.Y >= height) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
         /// <summary>Sets the value at the given Index2D position.</summary>
         protected void SetTile (IBoardIndex position, T value) {
             if (!IsValidIndex2D (position)) {
                 return;
             }
             values[position.X, position.Y] = value;
-        }
-
-        /// <summary>Checks if the given Index2D is within the bounds of the PuzzleBoard</summary>
-        protected bool IsValidIndex2D (IBoardIndex index) {
-            if (index.X < 0 || index.X >= width || index.Y < 0 || index.Y >= height) {
-                return false;
-            } else {
-                return true;
-            }
         }
 
         protected bool AreEqual (T valueA, T valueB) {

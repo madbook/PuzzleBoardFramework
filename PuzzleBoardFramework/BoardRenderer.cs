@@ -10,8 +10,7 @@ namespace PuzzleBoardFramework {
 
         Transform parent;
 
-        public BoardRenderer (BaseBoard<T> board, Transform parent) : base (board.width, board.height) {
-            this.board = board;
+        public BoardRenderer (IBoard board, Transform parent) : base (board.Width, board.Height) {
             this.parent = parent;
         }
         
@@ -63,8 +62,8 @@ namespace PuzzleBoardFramework {
         }
 
         public override void Clear () {
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
+            for (int x = 0; x < Width; x++) {
+                for (int y = 0; y < Height; y++) {
                     DeleteTile (new BoardPosition (x, y));
                 }
             }
@@ -85,7 +84,7 @@ namespace PuzzleBoardFramework {
             if (obj == null) {
                 return;
             }
-            obj.transform.localPosition = new Vector3 (position.X - width/2f + .5f, position.Y - height/2f + .5f, z);
+            obj.transform.localPosition = new Vector3 (position.X - Width/2f + .5f, position.Y - Height/2f + .5f, z);
         }
 
         public virtual void UpdateRenderValue (GameObject obj, T value) {
@@ -93,6 +92,7 @@ namespace PuzzleBoardFramework {
 
         public virtual void UpdateRenderRotation (GameObject obj, T value, MoveVector move) {
         } 
+
     }
 
 }
