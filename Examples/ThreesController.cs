@@ -4,18 +4,13 @@ using PuzzleBoardFramework;
 
 public class ThreesMergeStrategy : IntMergeStrategy {
     public override bool ShouldMerge (int from, int into) {
+        Debug.Log ("Should merge? " + from + " => " + into);
         return IsEmpty (into) || (from + into == 3) || (from == into && from > 2); 
     }
 }
 
-public class ThreesRenderer : BoardController<int> {
-    public override MergeStrategy<int> GetMergeStrategy () {
-        return new ThreesMergeStrategy ();
-    }
-
-    public override void UpdateTile (IBoardIndex position, int value) {
-        GameObject obj = GetRenderObject (position);
-        obj.GetComponentInChildren<TextMesh> ().text = value.ToString ();
+public class ThreesRenderer : BoardRenderer<int> {
+    public ThreesRenderer (BaseBoard<int> board, Transform parent) : base (board, parent) {
     }
 
     public override GameObject CreateRenderObject () {
@@ -32,11 +27,25 @@ public class ThreesRenderer : BoardController<int> {
         return obj;
     }
 
+    public override void UpdateRenderValue (GameObject obj, int value) {
+        obj.GetComponentInChildren<TextMesh> ().text = value.ToString ();
+    }
+}
+
+public class ThreesController : BoardController<int> {
+    public override MergeStrategy<int> GetMergeStrategy () {
+        return new ThreesMergeStrategy ();
+    }
+
+    public override BoardRenderer<int> GetBoardRenderer (BaseBoard<int> board, Transform parent) {
+        return new ThreesRenderer (board, parent);
+    }
+
     void Update () {
         if (Input.GetKeyDown (KeyCode.LeftArrow)) {
             board.PushAll (MoveVector.left);
             board.ApplyMovementAndReset (MoveVector.left);
-            InsertAtAnAvailablePosition (board.GetPositionsInColumnMatching (0, width - 1));
+            InsertAtAnAvailablePosition (board.GetPositionsInColumnMatching (width - 1, 0));
         } else if (Input.GetKeyDown (KeyCode.RightArrow)) {
             board.PushAll (MoveVector.right);
             board.ApplyMovementAndReset (MoveVector.right);
@@ -44,7 +53,7 @@ public class ThreesRenderer : BoardController<int> {
         } else if (Input.GetKeyDown (KeyCode.DownArrow)) {
             board.PushAll (MoveVector.down);
             board.ApplyMovementAndReset (MoveVector.down);
-            InsertAtAnAvailablePosition (board.GetPositionsInRowMatching (0, height - 1));
+            InsertAtAnAvailablePosition (board.GetPositionsInRowMatching (height - 1, 0));
         } else if (Input.GetKeyDown (KeyCode.UpArrow)) {
             board.PushAll (MoveVector.up);
             board.ApplyMovementAndReset (MoveVector.up);
@@ -57,6 +66,7 @@ public class ThreesRenderer : BoardController<int> {
             return;
         }
         IBoardIndex position = positions[0];
-        board.UpdateTile (position, Random.Range (1, 4));
+        int randomValue = Random.Range (1, 4);
+        board.UpdateTile (position, randomValue);
     }
 }

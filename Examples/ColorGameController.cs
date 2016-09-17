@@ -12,19 +12,26 @@ public class ColorMergeStrategy : GenericMergeStrategy<Color> {
     }
 }
 
-public class ColorGameRenderer : BoardController<Color> {
+public class ColorRenderer : BoardRenderer<Color> {
+    public ColorRenderer (BaseBoard<Color> board, Transform parent) : base (board, parent) {
+    }
+
+    public override GameObject CreateRenderObject () {
+        return GameObject.CreatePrimitive (PrimitiveType.Cube);
+    }
+
+    public override void UpdateRenderValue (GameObject obj, Color value) {
+        obj.GetComponent<MeshRenderer> ().material.color = value;
+    }
+}
+
+public class ColorGameController : BoardController<Color> {
     public override MergeStrategy<Color> GetMergeStrategy () {
         return new ColorMergeStrategy ();
     }
 
-    public override void UpdateTile (IBoardIndex position, Color value) {
-        GameObject obj = GetRenderObject (position);
-        obj.GetComponent<MeshRenderer> ().material.color = value;
-    }
-
-    public override GameObject CreateRenderObject () {
-        GameObject obj = GameObject.CreatePrimitive (PrimitiveType.Cube);
-        return obj;
+    public override BoardRenderer<Color> GetBoardRenderer (BaseBoard<Color> board, Transform parent) {
+        return new ColorRenderer (board, parent);
     }
 
     void Update () {
