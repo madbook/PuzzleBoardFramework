@@ -58,7 +58,7 @@ public class ColorGameRenderer : PuzzleBoardRenderer<Color> {
             } else {
                 color = Color.green;
             }
-            board.UpdateTile (position.X, position.Y, color);
+            board.UpdateTile (position, color);
         }
     }
 }

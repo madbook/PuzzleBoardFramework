@@ -18,13 +18,13 @@ public class SokobanRenderer : PuzzleBoardRenderer<int> {
     }
 
     void Init () {
-        board.UpdateTile (board.GetPositionsInColumn (0), WALL_TYPE);
-        board.UpdateTile (board.GetPositionsInColumn (width - 1), WALL_TYPE);
-        board.UpdateTile (board.GetPositionsInRow (0), WALL_TYPE);
-        board.UpdateTile (board.GetPositionsInRow (height - 1), WALL_TYPE);
-        board.UpdateTile (1, 1, PLAYER_TYPE);
-        board.UpdateTile (2, 2, CRATE_TYPE);
-        board.UpdateTile (2, 3, CRATE_TYPE);
+        board.UpdateTiles (board.GetPositionsInColumn (0), WALL_TYPE);
+        board.UpdateTiles (board.GetPositionsInColumn (width - 1), WALL_TYPE);
+        board.UpdateTiles (board.GetPositionsInRow (0), WALL_TYPE);
+        board.UpdateTiles (board.GetPositionsInRow (height - 1), WALL_TYPE);
+        board.UpdateTile (new BoardPosition (1, 1), PLAYER_TYPE);
+        board.UpdateTile (new BoardPosition (2, 2), CRATE_TYPE);
+        board.UpdateTile (new BoardPosition (2, 3), CRATE_TYPE);
     }
 
     public void Reset () {

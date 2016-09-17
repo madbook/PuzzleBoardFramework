@@ -54,8 +54,9 @@ namespace PuzzleBoardFramework {
 
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    if (board.IsPositionValue (x, y, matchValue)) {
-                        UpdateTile (x, y, push);
+                    BoardPosition position = new BoardPosition(x, y);
+                    if (board.IsPositionValue (position, matchValue)) {
+                        UpdateTile (position, push);
                     }
                 }
             }
@@ -88,16 +89,18 @@ namespace PuzzleBoardFramework {
         void TryPushLeft () {
             for (int y = 0; y < height; y++) {
                 for (int x = width - 1; x >= 1; x--) {
-                    MoveVector push = GetTile (x, y);
+                    BoardPosition position = new BoardPosition (x, y);
+                    MoveVector push = GetTile (position);
                     if (push == MoveVector.left) {
-                        TryPush (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y), push);
+                        TryPush (new BoardPosition (x, y), position + push, push);
                     }
                 }
 
                 for (int x = 1; x < width; x++) {
-                    MoveVector push = GetTile (x, y);
+                    BoardPosition position = new BoardPosition (x, y);
+                    MoveVector push = GetTile (position);
                     if (push == MoveVector.left) {
-                        TryMerge (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y));
+                        TryMerge (new BoardPosition (x, y), position + push);
                     }
                 }
             }
@@ -107,16 +110,18 @@ namespace PuzzleBoardFramework {
         void TryPushRight () {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width - 1; x++) {
-                    MoveVector push = GetTile (x, y);
+                    BoardPosition position = new BoardPosition (x, y);
+                    MoveVector push = GetTile (position);
                     if (push == MoveVector.right) {
-                        TryPush (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y), push);
+                        TryPush (new BoardPosition (x, y), position + push, push);
                     }
                 }
 
                 for (int x = width - 2; x >= 0; x--) {
-                    MoveVector push = GetTile (x, y);
+                    BoardPosition position = new BoardPosition (x, y);
+                    MoveVector push = GetTile (position);
                     if (push == MoveVector.right) {
-                        TryMerge (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y));
+                        TryMerge (new BoardPosition (x, y), position + push);
                     }
                 }
             }
@@ -126,16 +131,18 @@ namespace PuzzleBoardFramework {
         void TryPushDown () {
             for (int x = 0; x < width; x++) {
                 for (int y = height - 1; y >= 1; y--) {
-                    MoveVector push = GetTile (x, y);
+                    BoardPosition position = new BoardPosition (x, y);
+                    MoveVector push = GetTile (position);
                     if (push == MoveVector.down) {
-                        TryPush (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y), push);
+                        TryPush (new BoardPosition (x, y), position + push, push);
                     }
                 }
 
                 for (int y = 1; y < height; y++) {
-                    MoveVector push = GetTile (x, y);
+                    BoardPosition position = new BoardPosition (x, y);
+                    MoveVector push = GetTile (position);
                     if (push == MoveVector.down) {
-                        TryMerge (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y));
+                        TryMerge (new BoardPosition (x, y), position + push);
                     }
                 }
             }
@@ -145,16 +152,18 @@ namespace PuzzleBoardFramework {
         void TryPushUp () {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height - 1; y++) {
-                    MoveVector push = GetTile (x, y);
+                    BoardPosition position = new BoardPosition (x, y);
+                    MoveVector push = GetTile (position);
                     if (push == MoveVector.up) {
-                        TryPush (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y), push);
+                        TryPush (new BoardPosition (x, y), position + push, push);
                     }
                 }
 
                 for (int y = height - 2; y >= 0; y--) {
-                    MoveVector push = GetTile (x, y);
+                    BoardPosition position = new BoardPosition (x, y);
+                    MoveVector push = GetTile (position);
                     if (push == MoveVector.up) {
-                        TryMerge (new BoardPosition (x, y), new BoardPosition (x+push.x, y+push.y));
+                        TryMerge (new BoardPosition (x, y), position + push);
                     }
                 }
             }
