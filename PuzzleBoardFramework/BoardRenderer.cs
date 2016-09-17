@@ -2,16 +2,18 @@ using UnityEngine;
 
 namespace PuzzleBoardFramework {
 
-    public abstract class BoardRenderer<T> : BaseBoard<GameObject>, IUpdatableBoard<T>, IBoardRenderer<T> {
-        IUpdatableBoard<T> board;
+    /*
+        TODO - BoardRenderer should grab values directly from the board
+    */
+
+    public class BoardRenderer<T> : BaseBoard<GameObject>, IBoardRenderer<T> {
+
         Transform parent;
 
         public BoardRenderer (BaseBoard<T> board, Transform parent) : base (board.width, board.height) {
             this.board = board;
             this.parent = parent;
         }
-
-        public abstract GameObject CreateRenderObject ();
         
         public GameObject GetRenderObject (IBoardIndex position) {
             return GetTile (position);
@@ -68,13 +70,9 @@ namespace PuzzleBoardFramework {
             }
         }
 
-        T IUpdatableBoard<T>.GetTile (IBoardIndex position) {
-            return board.GetTile (position);
+        public virtual GameObject CreateRenderObject () {
+            return GameObject.CreatePrimitive (PrimitiveType.Cube);
         }
-
-        bool IUpdatableBoard<T>.IsPositionValue (IBoardIndex position, T value) {
-            return board.IsPositionValue (position, value);
-        } 
 
         public void RotateTile (IBoardIndex position, T value, MoveVector move) {
             GameObject obj = GetTile (position);
