@@ -30,6 +30,30 @@ namespace PuzzleBoardFramework {
         }
     }
 
+    public struct BoardState<T> : IBoardIndex {
+        readonly int x;
+        readonly int y;
+        readonly T value;
+
+        public int X {
+            get { return x; }
+        }
+
+        public int Y {
+            get { return y; }
+        }
+
+        public T Value {
+            get { return value; }
+        }
+
+        public BoardState (int x, int y, T value) {
+            this.x = x;
+            this.y = y;
+            this.value = value;
+        }
+    }
+
     /// <summary>A 2D integer normal vector.</summary>
     public struct MoveVector {
         public readonly int x;
