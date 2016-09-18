@@ -10,8 +10,8 @@ public class SokobanController : BoardController<int> {
     ITurnRecorder<Record<int>> history;
     bool recordingHistory;
 
-    public override bool ShouldPush (int from, int into) {
-        return into == CRATE_TYPE;
+    public override bool ShouldPush (IBoardIndex from, IBoardIndex into) {
+        return BaseBoard<int>.AreEqual (GetTile (into), CRATE_TYPE);
     }
     public new void Start () {
         base.Start ();

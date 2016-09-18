@@ -6,16 +6,19 @@ namespace PuzzleBoardFramework {
 
     /// <summary>Combines multiple PuzzleBoardFramework interface implementations into an easy-to-use MonoBehaviour class.</summary>
     public abstract class BoardController<T> : MonoBehaviour,
-            IPublisher<Record<T>>, IUpdatableBoard<T>, ISearchableBoard<T>, IPushableBoard<T>, IMergeStrategy<T>,
+            IPublisher<Record<T>>,
+            IMovableBoard<T>, IUpdateStrategy<T>,
+            IBoardSearcher<T>,
+            IBoardPusher<T>, IPushStrategy<T>,
             IBoardRenderer<T>, IRenderStrategy<T> {
 
         public int width = 4;
         public int height = 4;
         
         PublisherBoard<T> board;
-        BoardRenderer<T> boardRenderer;
         BoardSearcher<T> boardSearcher;
         BoardPusher<T> boardPusher;
+        BoardRenderer<T> boardRenderer;
 
         bool listening = true;
         bool hasReceivedSecondRecord = false;
@@ -60,6 +63,24 @@ namespace PuzzleBoardFramework {
             }
         }
 
+        /*
+        IPublisher<T> implemented by board.
+        */
+        public void Subscribe (Action<Record<T>> subscriber) {
+            board.Subscribe (subscriber);
+        }
+
+        public void Publish (Record<T> update) {
+            board.Publish (update);
+        }
+
+        public void UndoRecord (Record<T> record) {
+            board.UndoRecord (record);
+        }
+
+        /*
+        IMovableBoard<T> implemented by board.
+        */
         public int Width {
             get { return board.Width; }
         }
@@ -96,6 +117,13 @@ namespace PuzzleBoardFramework {
             board.InsertTile (position, value);
         }
 
+        public void Clear () {
+            listening = false;
+            board.Clear ();
+            boardRenderer.Clear ();
+            listening = true;
+        }
+
         public void MoveTile (IBoardIndex fromPosition, IBoardIndex toPosition) {
             board.MoveTile (fromPosition, toPosition);
         }
@@ -108,13 +136,24 @@ namespace PuzzleBoardFramework {
             board.SplitTile (fromPosition, toPosition, fromValue, toValue);
         }
 
-        public void Clear () {
-            listening = false;
-            board.Clear ();
-            boardRenderer.Clear ();
-            listening = true;
+        /*
+        IUpdateStrategy<T> implemented by board.
+        */
+        public virtual bool ShouldUpdate (IBoardIndex position, T value) {
+            return board.ShouldUpdate (position, value);
         }
 
+        public virtual bool ShouldInsert (IBoardIndex position, T value) {
+            return board.ShouldInsert (position, value);
+        }
+
+        public virtual bool ShouldDelete (IBoardIndex position) {
+            return board.ShouldDelete (position);
+        }
+
+        /*
+        IBoardPusher<T> implemented by boardPusher.
+        */
         public void PushAll (MoveVector push) {
             boardPusher.PushAll (push);
         }
@@ -139,6 +178,30 @@ namespace PuzzleBoardFramework {
             boardPusher.PushAllMatching (move, matchValue);
         }
 
+        /*
+        IPushStrategy<T> implemented by boardPusher.
+        */
+        public virtual bool ShouldMove (IBoardIndex from, IBoardIndex into) {
+            return boardPusher.ShouldMove (from, into);
+        }
+
+        /// <summary>Determines if the from value should merge with the into value.</summary>
+        public virtual bool ShouldMerge (IBoardIndex from, IBoardIndex into) {
+            return boardPusher.ShouldMerge (from, into);
+        }
+
+        /// <summary>Provides a new value when the two given values merge.</summary>
+        public virtual T GetMergedValue (IBoardIndex from, IBoardIndex into) {
+            return boardPusher.GetMergedValue (from, into);
+        }
+
+        public virtual bool ShouldPush (IBoardIndex from, IBoardIndex into) {
+            return boardPusher.ShouldPush (from, into);
+        }
+
+        /*
+        IBoardSearcher<T> implemented by boardSearcher.
+        */
         public List<IBoardIndex> GetPositionsMatching (T matchValue) {
             return boardSearcher.GetPositionsMatching (matchValue);
         }
@@ -167,12 +230,18 @@ namespace PuzzleBoardFramework {
             return boardSearcher.GetIdenticalAdjacentPositions (value, position);
         }
 
-        public virtual GameObject CreateRenderObject () {
-            return boardRenderer.CreateRenderObject ();
-        }
-
+        /*
+        IBoardRenderer<T> implemented by boardRenderer.
+        */
         public virtual void RotateTile (IBoardIndex position, T value, MoveVector move) {
             boardRenderer.RotateTile (position, value, move);
+        }
+
+        /*
+        IRenderStrategy<T> implemented by boardRenderer.
+        */
+        public virtual GameObject CreateRenderObject () {
+            return boardRenderer.CreateRenderObject ();
         }
 
         public virtual void UpdateRenderPosition (GameObject obj, IBoardIndex position, int z = 0) {
@@ -185,32 +254,6 @@ namespace PuzzleBoardFramework {
 
         public virtual void UpdateRenderRotation (GameObject obj, T value, MoveVector move) {
             boardRenderer.UpdateRenderRotation (obj, value, move);
-        }
-
-        public void Subscribe (Action<Record<T>> subscriber) {
-            board.Subscribe (subscriber);
-        }
-
-        public void Publish (Record<T> update) {
-            board.Publish (update);
-        }
-
-        public void UndoRecord (Record<T> record) {
-            board.UndoRecord (record);
-        }
-
-        public virtual bool ShouldPush (T from, T into) {
-            return boardPusher.ShouldPush (from, into);
-        }
-
-        /// <summary>Determines if the from value should merge with the into value.</summary>
-        public virtual bool ShouldMerge (T from, T into) {
-            return boardPusher.ShouldMerge (from, into);
-        }
-
-        /// <summary>Provides a new value when the two given values merge.</summary>
-        public virtual T GetMergedValue (T from, T into) {
-            return boardPusher.GetMergedValue (from, into);
         }
 
     }

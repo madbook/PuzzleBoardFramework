@@ -4,12 +4,12 @@ using PuzzleBoardFramework;
 
 public class ColorGameController : BoardController<Color> {
 
-    public override bool ShouldMerge (Color from, Color into) {
+    public override bool ShouldMerge (IBoardIndex from, IBoardIndex into) {
         return true;
     }
 
-    public override Color GetMergedValue (Color from, Color into) {
-        return Color.Lerp (from, into, .5f);
+    public override Color GetMergedValue (IBoardIndex from, IBoardIndex into) {
+        return Color.Lerp (GetTile (from), GetTile (into), .5f);
     }
 
     public override GameObject CreateRenderObject () {

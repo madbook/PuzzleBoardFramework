@@ -3,17 +3,17 @@ using System.Collections.Generic;
 namespace PuzzleBoardFramework {
 
     /// <summary>Provides an IPushableBoard interface to an existing IUpdatableBoard instance.</summary>
-    public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard<T>, IMergeStrategy<T> {
+    public class BoardPusher<T> : BaseBoard<MoveVector>, IBoardPusher<T>, IPushStrategy<T> {
 
-        IUpdatableBoard<T> board;
-        IMergeStrategy<T> mergeController;
+        IMovableBoard<T> board;
+        IPushStrategy<T> mergeController;
 
-        public BoardPusher (IUpdatableBoard<T> board) : base (board.Width, board.Height) {
+        public BoardPusher (IMovableBoard<T> board) : base (board.Width, board.Height) {
             this.board = board;
             this.mergeController = this;
         }
 
-        public BoardPusher (IUpdatableBoard<T> board, IMergeStrategy<T> mergeController) : base (board.Width, board.Height) {
+        public BoardPusher (IMovableBoard<T> board, IPushStrategy<T> mergeController) : base (board.Width, board.Height) {
             this.board = board;
             this.mergeController = mergeController;
         }
@@ -85,16 +85,20 @@ namespace PuzzleBoardFramework {
             Clear ();
         }
 
-        public virtual bool ShouldPush (T from, T into) {
-            return !BaseBoard<T>.IsEmpty (into);
+        public virtual bool ShouldMove (IBoardIndex from, IBoardIndex into) {
+            return BaseBoard<T>.IsEmpty (board.GetTile (into));
         }
 
-        public virtual bool ShouldMerge (T from, T into) {
-            return BaseBoard<T>.IsEmpty (into);
+        public virtual bool ShouldPush (IBoardIndex from, IBoardIndex into) {
+            return !BaseBoard<T>.IsEmpty (board.GetTile (into));
         }
 
-        public virtual T GetMergedValue (T from, T into) {
-            return from;
+        public virtual bool ShouldMerge (IBoardIndex from, IBoardIndex into) {
+            return false;
+        }
+
+        public virtual T GetMergedValue (IBoardIndex from, IBoardIndex into) {
+            return board.GetTile (from);
         }
 
         /// <summary>Iterates through all cells and attempts to apply movement to those currently moving left.</summary>
@@ -189,12 +193,12 @@ namespace PuzzleBoardFramework {
             if (push == MoveVector.zero) {
                 return;
             }
+            // TODO - this should be part of ShouldPush (i think)
             T tileFrom = board.GetTile (pushFrom);
-            T tileInto = board.GetTile (pushInto);
             if (BaseBoard<T>.IsEmpty (tileFrom)) {
                 return;
             }
-            if (mergeController.ShouldPush (tileFrom, tileInto)) {
+            if (mergeController.ShouldPush (pushFrom, pushInto)) {
                 UpdateTile (pushInto, push);
             }
         }
@@ -204,19 +208,17 @@ namespace PuzzleBoardFramework {
             if (!(IsValidIndex2D (mergeFrom) && IsValidIndex2D (mergeInto))) {
                 return;
             }
+            // TODO - this should be part of ShouldMove and ShouldMerge (i think)
             T valueFrom = board.GetTile (mergeFrom);
             T valueInto = board.GetTile (mergeInto);
             if (BaseBoard<T>.AreEqual (valueFrom, default (T))) {
                 return;
             }
-            // TODO - should merge and move be explicitly diferrent in the merge strategy?
-            if (mergeController.ShouldMerge (valueFrom, valueInto)) {
-                if (BaseBoard<T>.IsEmpty (valueInto)) {
-                    board.MoveTile (mergeFrom, mergeInto);
-                } else {
-                    T newValue = mergeController.GetMergedValue (valueFrom, valueInto);
-                    board.MergeTile (mergeFrom, mergeInto, newValue);
-                }
+            if (mergeController.ShouldMove (mergeFrom, mergeInto)) {
+                board.MoveTile (mergeFrom, mergeInto);
+            } else if (mergeController.ShouldMerge (mergeFrom, mergeInto)) {
+                T newValue = mergeController.GetMergedValue (mergeFrom, mergeInto);
+                board.MergeTile (mergeFrom, mergeInto, newValue);
             }
         }
 

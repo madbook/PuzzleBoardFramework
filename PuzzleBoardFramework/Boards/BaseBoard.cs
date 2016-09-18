@@ -3,11 +3,19 @@ using System.Collections.Generic;
 namespace PuzzleBoardFramework {
 
     /// <summary>A basic IUpdatableBoard implementation.</summary>
-    public class BaseBoard<T> : IUpdatableBoard<T> {
+    public class BaseBoard<T> : IUpdatableBoard<T>, IUpdateStrategy<T> {
         readonly int width;
         readonly int height;
 
         T[,] values;
+
+        public static bool AreEqual (T valueA, T valueB) {
+            return EqualityComparer<T>.Default.Equals (valueA, valueB);
+        }
+
+        public static bool IsEmpty (T value) {
+            return AreEqual (value, default (T));
+        }
 
         /// <summary>Create a new PuzzleBoard using a default MergeStrategy.</summary>
         public BaseBoard (int width, int height) {
@@ -16,6 +24,9 @@ namespace PuzzleBoardFramework {
             values = new T[width,height];
         }
 
+        /*
+        IUpdatableBoard<T>
+        */
         public int Width {
             get { return width; }
         }
@@ -24,9 +35,34 @@ namespace PuzzleBoardFramework {
             get { return height; }
         }
 
+        /// <summary>Checks if the given Index2D is within the bounds of the PuzzleBoard</summary>
+        public bool IsValidIndex2D (IBoardIndex index) {
+            if (index.X < 0 || index.X >= width || index.Y < 0 || index.Y >= height) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        /// <summary>Returns the value at the given Index2D position.</summary>
+        public virtual T GetTile (IBoardIndex position) {
+            return values[position.X, position.Y];
+        }
+
+        public virtual bool IsPositionValue (IBoardIndex position, T value) {
+            return AreEqual (GetTile (position), value);
+        }
+
         /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
         public virtual void UpdateTile (IBoardIndex position, T value) {
             SetTile (position, value);
+        }
+
+        /// <summary>Insert, update, or delete each value in a list of Index2D positions.</summary> 
+        public void UpdateTiles (List<IBoardIndex> positions, T value) {
+            foreach (IBoardIndex position in positions) {
+                UpdateTile (position, value);
+            }
         }
 
         public virtual void DeleteTile (IBoardIndex position) {
@@ -36,6 +72,15 @@ namespace PuzzleBoardFramework {
         public virtual void InsertTile (IBoardIndex position, T value) {
             if (AreEqual (GetTile (position), default (T))) {
                 SetTile (position, value);
+            }
+        }
+
+        /// <summary>Resets all MoveVectors.  Sets all values to default, using the current mergeStrategy.</summary>
+        public virtual void Clear () {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    values[x,y] = default (T);
+                }
             }
         }
 
@@ -59,40 +104,24 @@ namespace PuzzleBoardFramework {
             SetTile (fromPosition, fromValue);
         }
 
-        /// <summary>Resets all MoveVectors.  Sets all values to default, using the current mergeStrategy.</summary>
-        public virtual void Clear () {
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    values[x,y] = default (T);
-                }
-            }
+        /*
+        IUpdateStrategy<T>
+        */
+        public virtual bool ShouldUpdate (IBoardIndex position, T value) {
+            return !IsEmpty (value) && !IsEmpty (GetTile (position)); 
         }
 
-        /// <summary>Insert, update, or delete each value in a list of Index2D positions.</summary> 
-        public void UpdateTiles (List<IBoardIndex> positions, T value) {
-            foreach (IBoardIndex position in positions) {
-                UpdateTile (position, value);
-            }
+        public virtual bool ShouldInsert (IBoardIndex position, T value) {
+            return !IsEmpty (value) && IsEmpty (GetTile (position));
         }
 
-        /// <summary>Returns the value at the given Index2D position.</summary>
-        public virtual T GetTile (IBoardIndex position) {
-            return values[position.X, position.Y];
+        public virtual bool ShouldDelete (IBoardIndex position) {
+            return !IsEmpty (GetTile (position));
         }
 
-        public virtual bool IsPositionValue (IBoardIndex position, T value) {
-            return AreEqual (GetTile (position), value);
-        }
-
-        /// <summary>Checks if the given Index2D is within the bounds of the PuzzleBoard</summary>
-        public bool IsValidIndex2D (IBoardIndex index) {
-            if (index.X < 0 || index.X >= width || index.Y < 0 || index.Y >= height) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-
+        /*
+        TODO – remove One-off
+        */
         /// <summary>Sets the value at the given Index2D position.</summary>
         protected void SetTile (IBoardIndex position, T value) {
             if (!IsValidIndex2D (position)) {
@@ -101,13 +130,6 @@ namespace PuzzleBoardFramework {
             values[position.X, position.Y] = value;
         }
 
-        public static bool AreEqual (T valueA, T valueB) {
-            return EqualityComparer<T>.Default.Equals (valueA, valueB);
-        }
-
-        public static bool IsEmpty (T value) {
-            return AreEqual (value, default (T));
-        }
     }
 
 }

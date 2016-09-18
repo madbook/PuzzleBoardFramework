@@ -11,6 +11,46 @@ namespace PuzzleBoardFramework {
         int Y { get; }
     }
 
+    /// <summary>Represents something that can record groups of values as turns.</summary>
+    public interface ITurnRecorder<T> {
+        /// <summary>The current number of recorded turns.</summary>
+        /// <remarks>
+        ///     The "current turn" that recorded values are appended to should not be counted.
+        /// </remarks> 
+        int Count { get; }
+
+        /// <summary>Iterate over the the recorded values in the previous turn.</summary>
+        /// <remarks>
+        ///     Implementations should yield the recorded turns in the reverse order of their recording.
+        /// </remarks>
+        IEnumerable<T> IterateLastTurn ();
+
+        /// <summary>Add the value to the current turn.</summary>
+        void AddRecord (T value);
+
+        /// <summary>Remove the most recently recorded turn and clear all values from it.</summary>
+        void ClearLastTurn ();
+
+        /// <summary>Remove all turns and all recorded values and clear the current turn.</summary>
+        void ClearAll ();
+
+        /// <summary>Save the current turn.</summary>
+        void NewTurn ();
+    }
+
+    /// <summary>Provides methods for publishing and subscribing to updates.</summary>
+    public interface IPublisher<T> {
+        /// <summary>Add a callback action that will be called with each published update.</summary>
+        void Subscribe (Action<T> subscriber);
+
+        /// <summary>Publish an update that will be passed to all subscribers.</summary>
+        void Publish (T update);
+
+        /// TODO – this doesn't seem like the best place for this.
+        /// <summary>Should revert a previously published record.</summary>
+        void UndoRecord (T record);
+    }
+
     public interface IBoard {
         int Width { get; }
 
@@ -52,6 +92,11 @@ namespace PuzzleBoardFramework {
         /// </remarks>
         void InsertTile (IBoardIndex position, T value);
 
+        /// <summary>Set the value at all positions to default (T).</summary>
+        void Clear ();
+    }
+
+    public interface IMovableBoard<T> : IUpdatableBoard<T> {
         /// <summary>Set the value of toPosition to the current value at fromPosition and delete the value at fromPosition.</summary>
         /// <remarks>
         ///     Implementations should do nothing if the value at toPosition is not default (T).
@@ -70,13 +115,22 @@ namespace PuzzleBoardFramework {
         ///     Implementations should do nothing if the value at fromPosition is default (T).
         /// </remarks>
         void SplitTile (IBoardIndex fromPosition, IBoardIndex toPosition, T fromValue, T toValue);
+    }
 
-        /// <summary>Set the value at all positions to default (T).</summary>
-        void Clear ();
+    /// <summary>Provides methods for determining how tiles should interact when update.</summary>
+    public interface IUpdateStrategy<T> {
+        /// <summary>Determines if the from value should update to the at value.</summary>
+        bool ShouldUpdate (IBoardIndex position, T value);
+
+        /// <summary>Determines if the from value should insert at the at value.</summary>
+        bool ShouldInsert (IBoardIndex position, T value);
+
+        /// <summary>Determines if the value at should be deleted.</summary>
+        bool ShouldDelete (IBoardIndex position);
     }
 
     /// <summary>Represents a tile container with values that can be moved around by applying MovementVectors.</summary>
-    public interface IPushableBoard {
+    public interface IBoardPusher {
         /// <summary>Set the MoveVector at all positions to the given value.</summary>
         void PushAll (MoveVector push);
 
@@ -94,13 +148,28 @@ namespace PuzzleBoardFramework {
     }
 
     /// <summary>An IPushableBoard interface with additional type-specific methods.</summary>
-    public interface IPushableBoard<T> : IPushableBoard {
+    public interface IBoardPusher<T> : IBoardPusher {
         /// <summary>Set the MoveVector at all posisions matching the given value.</summary>
         void PushAllMatching (MoveVector move, T matchValue);
     }
 
+    /// <summary>Provides methods for determining how tiles should interact when pushed around.</summary>
+    public interface IPushStrategy<T> {
+        /// <summary>Determines if the value at from should move to the into position.</summary>
+        bool ShouldMove (IBoardIndex from, IBoardIndex into);
+
+        /// <summary>Determines if the from value should merge with the into value.</summary>
+        bool ShouldMerge (IBoardIndex from, IBoardIndex into);
+
+        /// <summary>Provides a new value when the two given values merge.</summary>
+        T GetMergedValue (IBoardIndex from, IBoardIndex into);
+
+        /// <summary>Determines if the from value should push the into value.</summary>
+        bool ShouldPush (IBoardIndex from, IBoardIndex into);
+    }
+
     /// <summary>Provides methods to get lists of positions on a tile container.</summary>
-    public interface ISearchableBoard<T> {
+    public interface IBoardSearcher<T> {
         /// <summary>Get a list of positions that match the given value.</summary>
         List<IBoardIndex> GetPositionsMatching (T matchValue);
 
@@ -129,64 +198,6 @@ namespace PuzzleBoardFramework {
         void RotateTile (IBoardIndex position, T value, MoveVector move);
     }
 
-    /// <summary>Represents an object that is animated.</summary>
-    public interface IAnimatable {
-        /// <summary>Determines whether or not animations should apply.</summary>
-        bool Animating { get; set; }
-    }
-
-    /// <summary>Represents something that can record groups of values as turns.</summary>
-    public interface ITurnRecorder<T> {
-        /// <summary>The current number of recorded turns.</summary>
-        /// <remarks>
-        ///     The "current turn" that recorded values are appended to should not be counted.
-        /// </remarks> 
-        int Count { get; }
-
-        /// <summary>Iterate over the the recorded values in the previous turn.</summary>
-        /// <remarks>
-        ///     Implementations should yield the recorded turns in the reverse order of their recording.
-        /// </remarks>
-        IEnumerable<T> IterateLastTurn ();
-
-        /// <summary>Add the value to the current turn.</summary>
-        void AddRecord (T value);
-
-        /// <summary>Remove the most recently recorded turn and clear all values from it.</summary>
-        void ClearLastTurn ();
-
-        /// <summary>Remove all turns and all recorded values and clear the current turn.</summary>
-        void ClearAll ();
-
-        /// <summary>Save the current turn.</summary>
-        void NewTurn ();
-    }
-
-    /// <summary>Provides methods for publishing and subscribing to updates.</summary>
-    public interface IPublisher<T> {
-        /// <summary>Add a callback action that will be called with each published update.</summary>
-        void Subscribe (Action<T> subscriber);
-
-        /// <summary>Publish an update that will be passed to all subscribers.</summary>
-        void Publish (T update);
-
-        /// TODO – this doesn't seem like the best place for this.
-        /// <summary>Should revert a previously published record.</summary>
-        void UndoRecord (T record);
-    }
-
-    /// <summary>Provides methods for determining how tiles should interact when pushed around.</summary>
-    public interface IMergeStrategy<T> {
-        /// <summary>Determines if the from value should push the into value.</summary>
-        bool ShouldPush (T from, T into);
-
-        /// <summary>Determines if the from value should merge with the into value.</summary>
-        bool ShouldMerge (T from, T into);
-
-        /// <summary>Provides a new value when the two given values merge.</summary>
-        T GetMergedValue (T from, T into);
-    }
-
     /// <summary>Provides methods for determining how a tile should be represented as a GameObject.</summary>
     public interface IRenderStrategy<T> {
         /// <summary>Create a blank render object to represent a new non-empty value.</summary>
@@ -200,6 +211,12 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Update obj rendering based on value and movement direction.</summary>
         void UpdateRenderRotation (GameObject obj, T value, MoveVector move);
+    }
+
+    /// <summary>Represents an object that is animated.</summary>
+    public interface IAnimatable {
+        /// <summary>Determines whether or not animations should apply.</summary>
+        bool Animating { get; set; }
     }
 
 }

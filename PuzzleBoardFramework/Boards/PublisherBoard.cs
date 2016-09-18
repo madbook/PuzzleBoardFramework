@@ -6,19 +6,47 @@ namespace PuzzleBoardFramework {
     /// <remarks>
     ///     Use the Subscribe method to receive records of updates made to the board's state.
     /// </remarks>
-    public class PublisherBoard<T> : BaseBoard<T>, IUpdatableBoard<T>, IPublisher<Record<T>> {
+    public class PublisherBoard<T> : BaseBoard<T>, IPublisher<Record<T>>,
+            IMovableBoard<T>, IUpdateStrategy<T> {
 
         Publisher<Record<T>> publisher = new Publisher<Record<T>> ();
 
         public PublisherBoard (int width, int height) : base (width, height) {
         }
 
+        /*
+        IPublisher<Record<T>>
+        */
         /// <summary>Register a callback method to be called when a Record is added via AddRecord.</summary>
         public void Subscribe (Action<Record<T>> callback) {
             // TODO move this out into the controller
             publisher.Subscribe (callback);
         }
 
+        /// <summary>Broadcasts a Record to any consumers added with RegisterConsumer</summary>
+        public void Publish (Record<T> record) {
+            publisher.Publish (record);
+        }
+
+        public void UndoRecord (Record<T> record) {
+            if (record.type == RecordType.Move) {
+                if (!IsPositionValue (record.oldState, default (T))) {
+                    return;
+                }
+                SetTile (record.newState, default (T));
+            }
+
+            SetTile (record.oldState, record.oldState.Value);
+            Publish (new Record<T> (
+                Record.GetOppositeRecordType (record.type),
+                record.newState,
+                record.oldState
+            ));
+        }
+
+        /*
+        IMovableBoard<T> overrides, the rest inherited from BaseBoard<T>
+        */
         /// <summary>Insert, update, or delete the value at the given Index2D position.</summary>
         public override void UpdateTile (IBoardIndex position, T value) {
             T oldValue = GetTile (position);
@@ -42,7 +70,6 @@ namespace PuzzleBoardFramework {
                     new BoardState<T> (position.X, position.Y, value)
                 ));
             }
-            
 
             SetTile (position, value);
         }
@@ -107,25 +134,6 @@ namespace PuzzleBoardFramework {
             ));
         }
 
-        public void UndoRecord (Record<T> record) {
-            if (record.type == RecordType.Move) {
-                if (!IsPositionValue (record.oldState, default (T))) {
-                    return;
-                }
-                SetTile (record.newState, default (T));
-            }
-
-            SetTile (record.oldState, record.oldState.Value);
-            Publish (new Record<T> (
-                Record.GetOppositeRecordType (record.type),
-                record.newState,
-                record.oldState
-            ));
-        }
-
-        /// <summary>Broadcasts a Record to any consumers added with RegisterConsumer</summary>
-        public void Publish (Record<T> record) {
-            publisher.Publish (record);
-        }
     }
+
 }
