@@ -125,6 +125,9 @@ namespace PuzzleBoardFramework {
 
     /// <summary>Represents an object that can render a tile container as GameObjects.</summary> 
     public interface IBoardRenderer<T> {
+        /// <summary>Create a blank render object to represent a new non-empty value.</summary>
+        GameObject CreateRenderObject ();
+
         /// <summary>Set the rotation of the display object at the given position based on the given value and direction.</summary>
         void RotateTile (IBoardIndex position, T value, MoveVector move);
 
