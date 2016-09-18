@@ -17,6 +17,10 @@ public class SokobanController : BoardController<int> {
         public SokobanRenderer (BaseBoard<int> board, Transform parent) : base (board, parent) {
         }
 
+        public override GameObject CreateRenderObject () {
+            return GameObject.CreatePrimitive (PrimitiveType.Cube);
+        }
+
         public override void UpdateRenderValue (GameObject obj, int value) {
             if (value == PLAYER_TYPE) {
                 obj.transform.localScale = new Vector3 (.5f, .5f, 1);

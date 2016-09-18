@@ -64,7 +64,17 @@ namespace PuzzleBoardFramework {
         }
 
         public virtual GameObject CreateRenderObject () {
-            return GameObject.CreatePrimitive (PrimitiveType.Cube);
+            GameObject obj = GameObject.CreatePrimitive (PrimitiveType.Cube);
+            GameObject text = new GameObject ("Text");
+            TextMesh textMesh = text.AddComponent<TextMesh> (); 
+            textMesh.fontSize = 10;
+            textMesh.alignment = TextAlignment.Center;
+            textMesh.anchor = TextAnchor.MiddleCenter;
+            textMesh.color = Color.black;
+            text.transform.parent = obj.transform;
+            text.transform.localScale = new Vector3 (.3f, .3f, .3f);
+            text.transform.localPosition = Vector3.zero;
+            return obj;
         }
 
         public void RotateTile (IBoardIndex position, T value, MoveVector move) {
@@ -82,9 +92,15 @@ namespace PuzzleBoardFramework {
         }
 
         public virtual void UpdateRenderValue (GameObject obj, T value) {
+            TextMesh textMesh = obj.GetComponentInChildren<TextMesh> ();
+            if (textMesh != null) {
+                textMesh.text = value.ToString ();
+            } 
         }
 
         public virtual void UpdateRenderRotation (GameObject obj, T value, MoveVector move) {
+            float angle = (move.x != 0) ? (move.x * 90f) : ((move.y + 1) * 90f);
+            obj.transform.rotation = Quaternion.AngleAxis (angle, Vector3.forward);
         } 
 
     }

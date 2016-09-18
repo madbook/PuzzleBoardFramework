@@ -15,21 +15,9 @@ public class ThreesController : BoardController<int> {
         }
 
         public override GameObject CreateRenderObject () {
-            GameObject obj = GameObject.CreatePrimitive (PrimitiveType.Cube);
-            GameObject text = new GameObject ("Text");
-            TextMesh textMesh = text.AddComponent<TextMesh> (); 
-            textMesh.fontSize = 20;
-            textMesh.alignment = TextAlignment.Center;
-            textMesh.anchor = TextAnchor.MiddleCenter;
-            textMesh.color = Color.black;
-            text.transform.parent = obj.transform;
-            text.transform.localScale = new Vector3 (.3f, .3f, .3f);
-            text.transform.localPosition = Vector3.zero;
+            GameObject obj = base.CreateRenderObject ();
+            obj.GetComponentInChildren<TextMesh> ().fontSize = 20;
             return obj;
-        }
-
-        public override void UpdateRenderValue (GameObject obj, int value) {
-            obj.GetComponentInChildren<TextMesh> ().text = value.ToString ();
         }
     }
 

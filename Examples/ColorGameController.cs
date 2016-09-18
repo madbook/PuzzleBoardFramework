@@ -18,6 +18,10 @@ public class ColorGameController : BoardController<Color> {
         public ColorRenderer (BaseBoard<Color> board, Transform parent) : base (board, parent) {
         }
 
+        public override GameObject CreateRenderObject () {
+            return GameObject.CreatePrimitive (PrimitiveType.Cube);
+        }
+
         public override void UpdateRenderValue (GameObject obj, Color value) {
             obj.GetComponent<MeshRenderer> ().material.color = value;
         }
