@@ -12,19 +12,15 @@ namespace PuzzleBoardFramework {
             this.parent = parent;
         }
         
-        public GameObject GetRenderObject (IBoardIndex position) {
-            return GetTile (position);
-        }
-        
         public void UpdateTile (IBoardIndex position, T value) {
-            GameObject obj = GetRenderObject (position);
+            GameObject obj = GetTile (position);
             if (obj != null) {
                 UpdateRenderValue (obj, value);
             }
         }
 
         public override void MoveTile (IBoardIndex oldPosition, IBoardIndex newPosition) {
-            GameObject obj = GetRenderObject (oldPosition);
+            GameObject obj = GetTile (oldPosition);
             if (obj != null) {
                 UpdateRenderPosition (obj, newPosition);
                 base.MoveTile (oldPosition, newPosition);
