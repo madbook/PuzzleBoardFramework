@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace PuzzleBoardFramework {
 
+    /// <summary>A basic IUpdatableBoard implementation.</summary>
     public class BaseBoard<T> : IUpdatableBoard<T> {
         readonly int width;
         readonly int height;

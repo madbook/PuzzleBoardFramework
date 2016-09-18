@@ -2,6 +2,10 @@ using System;
 
 namespace PuzzleBoardFramework {
 
+    /// <summary>Extends the BaseBoard implementation with the IPublisher interface.</summary>
+    /// <remarks>
+    ///     Use the Subscribe method to receive records of updates made to the board's state.
+    /// </remarks>
     public class PublisherBoard<T> : BaseBoard<T>, IUpdatableBoard<T>, IPublisher<Record<T>> {
 
         Publisher<Record<T>> publisher = new Publisher<Record<T>> ();
