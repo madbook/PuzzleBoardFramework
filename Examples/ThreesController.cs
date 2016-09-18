@@ -10,24 +10,15 @@ public class ThreesController : BoardController<int> {
         }
     }
 
-    class ThreesRenderer : BoardRenderer<int> {
-        public ThreesRenderer (BaseBoard<int> board, Transform parent) : base (board, parent) {
-        }
-
-        public override GameObject CreateRenderObject () {
-            GameObject obj = base.CreateRenderObject ();
-            obj.GetComponentInChildren<TextMesh> ().fontSize = 20;
-            return obj;
-        }
-    }
-
 
     public override IMergeStrategy<int> GetMergeStrategy () {
         return new ThreesMergeStrategy ();
     }
 
-    public override BoardRenderer<int> GetBoardRenderer (BaseBoard<int> board, Transform parent) {
-        return new ThreesRenderer (board, parent);
+    public override GameObject CreateRenderObject () {
+        GameObject obj = base.CreateRenderObject ();
+        obj.GetComponentInChildren<TextMesh> ().fontSize = 20;
+        return obj;
     }
 
     void Update () {

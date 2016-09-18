@@ -13,28 +13,6 @@ public class SokobanController : BoardController<int> {
         }
     }
 
-    class SokobanRenderer : BoardRenderer<int> {
-        public SokobanRenderer (BaseBoard<int> board, Transform parent) : base (board, parent) {
-        }
-
-        public override GameObject CreateRenderObject () {
-            return GameObject.CreatePrimitive (PrimitiveType.Cube);
-        }
-
-        public override void UpdateRenderValue (GameObject obj, int value) {
-            if (value == PLAYER_TYPE) {
-                obj.transform.localScale = new Vector3 (.5f, .5f, 1);
-                obj.GetComponent<MeshRenderer> ().material.color = Color.red;
-            } else if (value == CRATE_TYPE) {
-                obj.transform.localScale = new Vector3 (1, 1, 1);
-                obj.GetComponent<MeshRenderer> ().material.color = Color.yellow;
-            } else {
-                obj.transform.localScale = new Vector3 (1, 1, 1);
-                obj.GetComponent<MeshRenderer> ().material.color = Color.gray;
-            }
-        }
-    }
-
 
     ITurnRecorder<Record<int>> history;
     bool recordingHistory;
@@ -51,8 +29,21 @@ public class SokobanController : BoardController<int> {
         return new SokobanStrategy ();
     }
 
-    public override BoardRenderer<int> GetBoardRenderer (BaseBoard<int> board, Transform parent) {
-        return new SokobanRenderer (board, parent);
+    public override GameObject CreateRenderObject () {
+        return GameObject.CreatePrimitive (PrimitiveType.Cube);
+    }
+
+    public override void UpdateRenderValue (GameObject obj, int value) {
+        if (value == PLAYER_TYPE) {
+            obj.transform.localScale = new Vector3 (.5f, .5f, 1);
+            obj.GetComponent<MeshRenderer> ().material.color = Color.red;
+        } else if (value == CRATE_TYPE) {
+            obj.transform.localScale = new Vector3 (1, 1, 1);
+            obj.GetComponent<MeshRenderer> ().material.color = Color.yellow;
+        } else {
+            obj.transform.localScale = new Vector3 (1, 1, 1);
+            obj.GetComponent<MeshRenderer> ().material.color = Color.gray;
+        }
     }
 
     void Init () {

@@ -14,26 +14,17 @@ public class ColorGameController : BoardController<Color> {
         }
     }
 
-    class ColorRenderer : BoardRenderer<Color> {
-        public ColorRenderer (BaseBoard<Color> board, Transform parent) : base (board, parent) {
-        }
-
-        public override GameObject CreateRenderObject () {
-            return GameObject.CreatePrimitive (PrimitiveType.Cube);
-        }
-
-        public override void UpdateRenderValue (GameObject obj, Color value) {
-            obj.GetComponent<MeshRenderer> ().material.color = value;
-        }
-    }
-
 
     public override IMergeStrategy<Color> GetMergeStrategy () {
         return new ColorMergeStrategy ();
     }
 
-    public override BoardRenderer<Color> GetBoardRenderer (BaseBoard<Color> board, Transform parent) {
-        return new ColorRenderer (board, parent);
+    public override GameObject CreateRenderObject () {
+        return GameObject.CreatePrimitive (PrimitiveType.Cube);
+    }
+
+    public override void UpdateRenderValue (GameObject obj, Color value) {
+        obj.GetComponent<MeshRenderer> ().material.color = value;
     }
 
     void Update () {

@@ -21,12 +21,11 @@ namespace PuzzleBoardFramework {
         Record<T> secondRecord;
 
         public abstract IMergeStrategy<T> GetMergeStrategy ();
-        public abstract BoardRenderer<T> GetBoardRenderer (BaseBoard<T> board, Transform parent);
 
         public void Start () {
             board = new PublisherBoard<T> (width, height);
             board.Subscribe (OnRecordReceived);
-            boardRenderer = GetBoardRenderer (board, transform);
+            boardRenderer = new BoardRenderer<T> (board, transform);
             IMergeStrategy<T> mergeStrategy = GetMergeStrategy ();
             boardSearcher = new BoardSearcher<T> (board);
             boardPusher = new BoardPusher<T> (board, mergeStrategy);
@@ -170,23 +169,23 @@ namespace PuzzleBoardFramework {
             return boardSearcher.GetIdenticalAdjacentPositions (value, position);
         }
 
-        public GameObject CreateRenderObject () {
+        public virtual GameObject CreateRenderObject () {
             return boardRenderer.CreateRenderObject ();
         }
 
-        public void RotateTile (IBoardIndex position, T value, MoveVector move) {
+        public virtual void RotateTile (IBoardIndex position, T value, MoveVector move) {
             boardRenderer.RotateTile (position, value, move);
         }
 
-        public void UpdateRenderPosition (GameObject obj, IBoardIndex position, int z = 0) {
+        public virtual void UpdateRenderPosition (GameObject obj, IBoardIndex position, int z = 0) {
             boardRenderer.UpdateRenderPosition (obj, position, z);
         }
 
-        public void UpdateRenderValue (GameObject obj, T value) {
+        public virtual void UpdateRenderValue (GameObject obj, T value) {
             boardRenderer.UpdateRenderValue (obj, value);
         }
 
-        public void UpdateRenderRotation (GameObject obj, T value, MoveVector move) {
+        public virtual void UpdateRenderRotation (GameObject obj, T value, MoveVector move) {
             boardRenderer.UpdateRenderRotation (obj, value, move);
         }
 
