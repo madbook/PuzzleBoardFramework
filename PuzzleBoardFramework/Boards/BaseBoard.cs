@@ -100,8 +100,12 @@ namespace PuzzleBoardFramework {
             values[position.X, position.Y] = value;
         }
 
-        protected bool AreEqual (T valueA, T valueB) {
+        public static bool AreEqual (T valueA, T valueB) {
             return EqualityComparer<T>.Default.Equals (valueA, valueB);
+        }
+
+        public static bool IsEmpty (T value) {
+            return AreEqual (value, default (T));
         }
     }
 
