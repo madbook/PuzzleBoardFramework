@@ -3,14 +3,19 @@ using System.Collections.Generic;
 namespace PuzzleBoardFramework {
 
     /// <summary>Provides an IPushableBoard interface to an existing IUpdatableBoard instance.</summary>
-    public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard<T> {
+    public class BoardPusher<T> : BaseBoard<MoveVector>, IPushableBoard<T>, IMergeStrategy<T> {
 
         IUpdatableBoard<T> board;
-        IMergeStrategy<T> mergeStrategy;
+        IMergeStrategy<T> mergeController;
 
-        public BoardPusher (IUpdatableBoard<T> board, IMergeStrategy<T> mergeStrategy) : base (board.Width, board.Height) {
+        public BoardPusher (IUpdatableBoard<T> board) : base (board.Width, board.Height) {
             this.board = board;
-            this.mergeStrategy = mergeStrategy;
+            this.mergeController = this;
+        }
+
+        public BoardPusher (IUpdatableBoard<T> board, IMergeStrategy<T> mergeController) : base (board.Width, board.Height) {
+            this.board = board;
+            this.mergeController = mergeController;
         }
 
         /// <summary>Set movement vectors on cells to the given direction.</summary>
@@ -78,6 +83,18 @@ namespace PuzzleBoardFramework {
             TryPushUp ();
             TryPushDown ();
             Clear ();
+        }
+
+        public virtual bool ShouldPush (T from, T into) {
+            return !BaseBoard<T>.IsEmpty (into);
+        }
+
+        public virtual bool ShouldMerge (T from, T into) {
+            return BaseBoard<T>.IsEmpty (into);
+        }
+
+        public virtual T GetMergedValue (T from, T into) {
+            return from;
         }
 
         /// <summary>Iterates through all cells and attempts to apply movement to those currently moving left.</summary>
@@ -177,7 +194,7 @@ namespace PuzzleBoardFramework {
             if (BaseBoard<T>.IsEmpty (tileFrom)) {
                 return;
             }
-            if (mergeStrategy.ShouldPush (tileFrom, tileInto)) {
+            if (mergeController.ShouldPush (tileFrom, tileInto)) {
                 UpdateTile (pushInto, push);
             }
         }
@@ -193,11 +210,11 @@ namespace PuzzleBoardFramework {
                 return;
             }
             // TODO - should merge and move be explicitly diferrent in the merge strategy?
-            if (mergeStrategy.ShouldMerge (valueFrom, valueInto)) {
+            if (mergeController.ShouldMerge (valueFrom, valueInto)) {
                 if (BaseBoard<T>.IsEmpty (valueInto)) {
                     board.MoveTile (mergeFrom, mergeInto);
                 } else {
-                    T newValue = mergeStrategy.Merge (valueFrom, valueInto);
+                    T newValue = mergeController.GetMergedValue (valueFrom, valueInto);
                     board.MergeTile (mergeFrom, mergeInto, newValue);
                 }
             }

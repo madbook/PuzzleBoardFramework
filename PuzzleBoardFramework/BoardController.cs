@@ -6,7 +6,8 @@ namespace PuzzleBoardFramework {
 
     /// <summary>Combines multiple PuzzleBoardFramework interface implementations into an easy-to-use MonoBehaviour class.</summary>
     public abstract class BoardController<T> : MonoBehaviour,
-            IPublisher<Record<T>>, IUpdatableBoard<T>, ISearchableBoard<T>, IPushableBoard<T>, IBoardRenderer<T> {
+            IPublisher<Record<T>>, IUpdatableBoard<T>, ISearchableBoard<T>, IPushableBoard<T>, IMergeStrategy<T>,
+            IBoardRenderer<T>, IRenderStrategy<T> {
 
         public int width = 4;
         public int height = 4;
@@ -20,15 +21,12 @@ namespace PuzzleBoardFramework {
         bool hasReceivedSecondRecord = false;
         Record<T> secondRecord;
 
-        public abstract IMergeStrategy<T> GetMergeStrategy ();
-
         public void Start () {
             board = new PublisherBoard<T> (width, height);
             board.Subscribe (OnRecordReceived);
-            boardRenderer = new BoardRenderer<T> (board, transform);
-            IMergeStrategy<T> mergeStrategy = GetMergeStrategy ();
+            boardRenderer = new BoardRenderer<T> (board, transform, this);
             boardSearcher = new BoardSearcher<T> (board);
-            boardPusher = new BoardPusher<T> (board, mergeStrategy);
+            boardPusher = new BoardPusher<T> (board, this);
         }
 
         public virtual void OnRecordReceived (Record<T> record) {
@@ -199,6 +197,20 @@ namespace PuzzleBoardFramework {
 
         public void UndoRecord (Record<T> record) {
             board.UndoRecord (record);
+        }
+
+        public virtual bool ShouldPush (T from, T into) {
+            return boardPusher.ShouldPush (from, into);
+        }
+
+        /// <summary>Determines if the from value should merge with the into value.</summary>
+        public virtual bool ShouldMerge (T from, T into) {
+            return boardPusher.ShouldMerge (from, into);
+        }
+
+        /// <summary>Provides a new value when the two given values merge.</summary>
+        public virtual T GetMergedValue (T from, T into) {
+            return boardPusher.GetMergedValue (from, into);
         }
 
     }

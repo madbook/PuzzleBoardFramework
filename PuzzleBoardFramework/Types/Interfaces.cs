@@ -125,20 +125,8 @@ namespace PuzzleBoardFramework {
 
     /// <summary>Represents an object that can render a tile container as GameObjects.</summary> 
     public interface IBoardRenderer<T> {
-        /// <summary>Create a blank render object to represent a new non-empty value.</summary>
-        GameObject CreateRenderObject ();
-
         /// <summary>Set the rotation of the display object at the given position based on the given value and direction.</summary>
         void RotateTile (IBoardIndex position, T value, MoveVector move);
-
-        /// <summary>Update obj rendering based on position.</summary>
-        void UpdateRenderPosition (GameObject obj, IBoardIndex position, int z = 0);
-
-        /// <summary>Update obj rendering based on value.</summary>
-        void UpdateRenderValue (GameObject obj, T value);
-
-        /// <summary>Update obj rendering based on value and movement direction.</summary>
-        void UpdateRenderRotation (GameObject obj, T value, MoveVector move);
     }
 
     /// <summary>Represents an object that is animated.</summary>
@@ -196,7 +184,22 @@ namespace PuzzleBoardFramework {
         bool ShouldMerge (T from, T into);
 
         /// <summary>Provides a new value when the two given values merge.</summary>
-        T Merge (T from, T into);
+        T GetMergedValue (T from, T into);
+    }
+
+    /// <summary>Provides methods for determining how a tile should be represented as a GameObject.</summary>
+    public interface IRenderStrategy<T> {
+        /// <summary>Create a blank render object to represent a new non-empty value.</summary>
+        GameObject CreateRenderObject ();
+
+        /// <summary>Update obj rendering based on position.</summary>
+        void UpdateRenderPosition (GameObject obj, IBoardIndex position, int z = 0);
+
+        /// <summary>Update obj rendering based on value.</summary>
+        void UpdateRenderValue (GameObject obj, T value);
+
+        /// <summary>Update obj rendering based on value and movement direction.</summary>
+        void UpdateRenderRotation (GameObject obj, T value, MoveVector move);
     }
 
 }

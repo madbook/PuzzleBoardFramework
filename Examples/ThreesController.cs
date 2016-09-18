@@ -4,15 +4,12 @@ using PuzzleBoardFramework;
 
 public class ThreesController : BoardController<int> {
 
-    class ThreesMergeStrategy : IntMergeStrategy {
-        public override bool ShouldMerge (int from, int into) {
-            return BaseBoard<int>.IsEmpty (into) || (from + into == 3) || (from == into && from > 2); 
-        }
+    public override bool ShouldMerge (int from, int into) {
+        return BaseBoard<int>.IsEmpty (into) || (from + into == 3) || (from == into && from > 2); 
     }
 
-
-    public override IMergeStrategy<int> GetMergeStrategy () {
-        return new ThreesMergeStrategy ();
+    public override int GetMergedValue (int from, int into) {
+        return from + into;
     }
 
     public override GameObject CreateRenderObject () {

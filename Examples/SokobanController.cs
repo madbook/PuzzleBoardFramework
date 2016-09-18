@@ -7,26 +7,18 @@ public class SokobanController : BoardController<int> {
     const int CRATE_TYPE = 2;
     const int WALL_TYPE = 3;
 
-    class SokobanStrategy : GenericMergeStrategy<int> {
-        public override bool ShouldPush (int from, int into) {
-            return into == CRATE_TYPE;
-        }
-    }
-
-
     ITurnRecorder<Record<int>> history;
     bool recordingHistory;
 
+    public override bool ShouldPush (int from, int into) {
+        return into == CRATE_TYPE;
+    }
     public new void Start () {
         base.Start ();
         Subscribe (OnRecordReceived);
         history = new History<Record<int>> ();
         Init ();
         recordingHistory = true;
-    }
-
-    public override IMergeStrategy<int> GetMergeStrategy () {
-        return new SokobanStrategy ();
     }
 
     public override GameObject CreateRenderObject () {

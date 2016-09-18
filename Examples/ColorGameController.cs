@@ -4,19 +4,12 @@ using PuzzleBoardFramework;
 
 public class ColorGameController : BoardController<Color> {
 
-    class ColorMergeStrategy : GenericMergeStrategy<Color> {
-        public override bool ShouldMerge (Color from, Color into) {
-            return true;
-        }
-
-        public override Color Merge (Color from, Color into) {
-            return Color.Lerp (from, into, .5f);
-        }
+    public override bool ShouldMerge (Color from, Color into) {
+        return true;
     }
 
-
-    public override IMergeStrategy<Color> GetMergeStrategy () {
-        return new ColorMergeStrategy ();
+    public override Color GetMergedValue (Color from, Color into) {
+        return Color.Lerp (from, into, .5f);
     }
 
     public override GameObject CreateRenderObject () {

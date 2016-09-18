@@ -4,34 +4,41 @@ using UnityEngine;
 namespace PuzzleBoardFramework {
 
     /// <summary>Provides an IBoardRenderer interface to an existing IBoard instance.</summary>
-    public class BoardRenderer<T> : BaseBoard<GameObject>, IBoardRenderer<T> {
+    public class BoardRenderer<T> : BaseBoard<GameObject>, IBoardRenderer<T>, IRenderStrategy<T> {
 
         Transform parent;
+        IRenderStrategy<T> renderController;
 
         public BoardRenderer (IBoard board, Transform parent) : base (board.Width, board.Height) {
             this.parent = parent;
+            this.renderController = this;
+        }
+
+        public BoardRenderer (IBoard board, Transform parent, IRenderStrategy<T> renderController) : base (board.Width, board.Height) {
+            this.parent = parent;
+            this.renderController = renderController;
         }
         
         public void UpdateTile (IBoardIndex position, T value) {
             GameObject obj = GetTile (position);
             if (obj != null) {
-                UpdateRenderValue (obj, value);
+                renderController.UpdateRenderValue (obj, value);
             }
         }
 
         public override void MoveTile (IBoardIndex oldPosition, IBoardIndex newPosition) {
             GameObject obj = GetTile (oldPosition);
             if (obj != null) {
-                UpdateRenderPosition (obj, newPosition);
+                renderController.UpdateRenderPosition (obj, newPosition);
                 base.MoveTile (oldPosition, newPosition);
             }
         }
 
         public void InsertTile (IBoardIndex position, T value) {
-            GameObject obj = CreateRenderObject ();
+            GameObject obj = renderController.CreateRenderObject ();
             base.InsertTile (position, obj);
-            UpdateRenderPosition (obj, position);
-            UpdateRenderValue (obj, value);
+            renderController.UpdateRenderPosition (obj, position);
+            renderController.UpdateRenderValue (obj, value);
             obj.transform.parent = parent;
         }
 
@@ -80,7 +87,7 @@ namespace PuzzleBoardFramework {
         public void RotateTile (IBoardIndex position, T value, MoveVector move) {
             GameObject obj = GetTile (position);
             if (obj != null) {
-                UpdateRenderRotation (obj, value, move);
+                renderController.UpdateRenderRotation (obj, value, move);
             }
         }
 
