@@ -174,7 +174,7 @@ namespace PuzzleBoardFramework {
             }
             T tileFrom = board.GetTile (pushFrom);
             T tileInto = board.GetTile (pushInto);
-            if (mergeStrategy.IsEmpty (tileFrom)) {
+            if (BaseBoard<T>.IsEmpty (tileFrom)) {
                 return;
             }
             if (mergeStrategy.ShouldPush (tileFrom, tileInto)) {
@@ -189,12 +189,12 @@ namespace PuzzleBoardFramework {
             }
             T valueFrom = board.GetTile (mergeFrom);
             T valueInto = board.GetTile (mergeInto);
-            if (valueFrom.Equals (default (T))) {
+            if (BaseBoard<T>.AreEqual (valueFrom, default (T))) {
                 return;
             }
             // TODO - should merge and move be explicitly diferrent in the merge strategy?
             if (mergeStrategy.ShouldMerge (valueFrom, valueInto)) {
-                if (mergeStrategy.IsEmpty (valueInto)) {
+                if (BaseBoard<T>.IsEmpty (valueInto)) {
                     board.MoveTile (mergeFrom, mergeInto);
                 } else {
                     T newValue = mergeStrategy.Merge (valueFrom, valueInto);

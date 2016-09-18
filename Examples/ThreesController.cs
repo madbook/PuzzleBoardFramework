@@ -6,7 +6,7 @@ public class ThreesController : BoardController<int> {
 
     class ThreesMergeStrategy : IntMergeStrategy {
         public override bool ShouldMerge (int from, int into) {
-            return IsEmpty (into) || (from + into == 3) || (from == into && from > 2); 
+            return BaseBoard<int>.IsEmpty (into) || (from + into == 3) || (from == into && from > 2); 
         }
     }
 

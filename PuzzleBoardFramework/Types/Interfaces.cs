@@ -197,12 +197,6 @@ namespace PuzzleBoardFramework {
 
         /// <summary>Provides a new value when the two given values merge.</summary>
         T Merge (T from, T into);
-
-        /// <summary>Deprecated: Returns if the given value should be considered empty.</summary> 
-        bool IsEmpty (T value);
-
-        /// <summary>Deprecated: Returns a new empty value.</summary>
-        T Empty ();
     }
 
 }
