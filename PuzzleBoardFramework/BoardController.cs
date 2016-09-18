@@ -170,6 +170,10 @@ namespace PuzzleBoardFramework {
             return boardSearcher.GetIdenticalAdjacentPositions (value, position);
         }
 
+        public void RotateTile (IBoardIndex position, T value, MoveVector move) {
+            boardRenderer.RotateTile (position, value, move);
+        }
+
         public void UpdateRenderPosition (GameObject obj, IBoardIndex position, int z = 0) {
             boardRenderer.UpdateRenderPosition (obj, position, z);
         }
